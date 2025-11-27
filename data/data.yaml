@@ -371,7 +371,7 @@ filters:
       - "wikidata.org"
       - "wikimedia.org"
       - "fandom.com"
-      - "neerc.ifmo.ru"
+      - "neerc.ifmo.ru" # Сайт «Викиконспекты» (https://neerc.ifmo.ru/wiki/index.php?title=Заглавная_страница)
     selector_groups:
       WebUI:
         description: "Веб-интерфейс"

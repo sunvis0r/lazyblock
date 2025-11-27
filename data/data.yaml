@@ -122,7 +122,14 @@ filters:
             tags: ["ad"]
             selectors: ["shreddit-comments-page-ad"]
   - title: "Stack Overflow и Stack Exchange"
-    domains: ["stackoverflow.com", "superuser.com", "stackexchange.com"]
+    domains:
+      - "stackoverflow.com"
+      - "superuser.com"
+      - "stackexchange.com"
+      - "serverfault.com"
+      - "mathoverflow.net"
+      - "stackapps.com"
+      - "askubuntu.com"
     selector_groups:
       LeftSidebar:
         description: "Сайдбар (панель слева)"

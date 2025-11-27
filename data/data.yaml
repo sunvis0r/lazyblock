@@ -401,3 +401,31 @@ filters:
             selectors: [":has(> [aria-label=\"User navigation\"]) :has(> * > [href*=\"tab=repositories\"]) :has(> [href=\"/settings/copilot\"])"]
           - title: "Пункт «Try Enterprise»"
             selectors: [":has(> [aria-label=\"User navigation\"]) :has(> * > [href*=\"tab=repositories\"]) :has(> [href*=\"/organizations/enterprise_plan\"])"]
+  - title: "Авито (avito)"
+    domains: ["avito.ru"]
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Подвал"
+            selectors: ["#app [class*=\"module__footer\"]"]
+          - title: "Баннер вверху"
+            description: "Баннер в самом верху. Надпись на нём: «Чёрная пятница до 30 ноября — ловите суперскидки и товары за 99 ₽»"
+            selectors: ["#app [class*=\"top-banner\"]"]
+          - title: "Выпадающее меню «Для бизнеса»"
+            description: "Выпадающее меню «Для бизнеса» сверху"
+            selectors: ["#app [data-marker=\"header/navbar\"] ul > li:has([href*=\"avito.ru/business\"])"]
+          - title: "Ссылка «Карьера в Авито»"
+            description: "Ссылка «Карьера в Авито» сверху"
+            selectors: ["#app [data-marker=\"header/navbar\"] ul > li:has([href*=\"career.avito.com\"])"]
+          - title: "Ссылка «Помощь»"
+            description: "Ссылка «Помощь» сверху"
+            selectors: ["#app [data-marker=\"header/navbar\"] ul > li:has([href*=\"support.avito.ru\"])"]
+          - title: "Ссылка «#яПомогаю»"
+            description: "Ссылка «#яПомогаю» сверху"
+            selectors: ["#app [data-marker=\"header/navbar\"] ul > li:has([href^=\"/avito-care\"])"]
+      Page:
+        description: "Веб-страница объявления"
+        selectors:
+          - title: "Реклама Авито Рекламы"
+            selectors: ["#app [class*=\"avito-ads-container\"]"]

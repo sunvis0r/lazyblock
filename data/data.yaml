@@ -1,0 +1,396 @@
+filters:
+  - title: "Google"
+    domains: ["google.com"]
+    selector_groups:
+      SearchResults:
+        description: "Селекторы, работающие в поисковой выдаче (например, https://www.google.com/search?q=example)"
+        selectors:
+          - title: "Подвал"
+            #description:
+            tags: ["junk"]
+            selectors: ["footer", "#sfooter"]
+          - title: "Приложения Google и кнопка «Войти»"
+            #description:
+            tags: ["junk"]
+            selectors: ["#searchform [action=\"/search\"] + div"]
+          - title: "«Обзор от ИИ»"
+            selectors: ["*:has(> [data-al=\"Обзор от ИИ готов\"])"]
+          - title: "«Вопросы по теме» и «Другие также ищут»"
+            description: "Набор дополнительных поисковых запросов ВЫШЕ поисковой выдачей и НИЖЕ"
+            selectors: ["#main [data-initq]"]
+  - title: "YouTube"
+    domains: ["youtube.com"]
+    selector_groups:
+      MainPage:
+        description: "Заглавная страница"
+        selectors:
+          - title: "Реклама YouTube Premium"
+            selectors: ["#primary #masthead-ad"]
+          - title: "«Ещё темы»"
+            description: "Карусель с видео, предложенными YouTube'ом"
+            selectors: ["ytd-rich-section-renderer"]
+      Sidebar:
+        description: "Сайдбар (панель слева)"
+        selectors:
+          - title: "Нижний колонтитул"
+            description: "Нижний колонтитул сайдбара с «О сервисе», «Прессе», «Авторские права», «Связаться с нами», ..., «Условия использования», «Конфиденциальность» и т.д."
+            selectors: ["ytd-guide-renderer #footer"]
+      Video:
+        description: "Веб-страница с открытым видео"
+        selectors:
+          - title: "Магазин"
+            description: "Товары, предлагаемые YouTube'ом и автором видео к покупке (например, «Товары магазина \"Channel Author\"»)"
+            selectors: ["#primary #below > ytd-merch-shelf-renderer"]
+          - title: "Кнопка «Стать спонсором»"
+            description: "Кнопка «Стать спонсором», находящаяся левее кнопки «Подписаться»"
+            selectors: ["#primary #sponsor-button"]
+  - title: "Ozon"
+    domains: ["ozon.ru"]
+    selector_groups:
+      Ad:
+        description: "Реклама"
+        selectors:
+          - title: "Одна огромная плитка-карусель с рекламой"
+            #description:
+            tags: ["ad"]
+            selectors: ["[data-widget=\"advBanner\"]"]
+          - title: "Полоса из реклам"
+            #description:
+            tags: ["ad"]
+            selectors: ["[data-widget=\"imageList\"]:has([title=\"Реклама\"])"]
+      Junk:
+        description: "Мусор"
+        selectors:
+          - title: "Убрать баннер сверху"
+            selectors: ["[data-widget=\"wallpaper\"] #stickyHeader ~ *"]
+      ProductTiles:
+        description: "Плитки товаров"
+        selectors:
+          - title: "«Чёрная пятница» поверх тамбнейла продукта"
+            tags: ["junk"]
+            selectors: [".tile-root section:has([title=\"Чёрная пятница\"])"]
+          - title: "«Вау-цены» поверх тамбнейла продукта"
+            tags: ["junk"]
+            selectors: [".tile-root section:has([title=\"Вау-цены\"])"]
+          - title: "«Цена что надо» поверх тамбнейла продукта"
+            tags: ["junk"]
+            selectors: [".tile-root section:has([title=\"Цена что надо\"])"]
+          - title: "Значок Ozon и надпись «Ozon» рядом с количеством отзывов"
+            description: "Сам Ozon никак не описывает для чего они"
+            tags: ["junk"]
+            selectors: [".tile-root .tsBodyMBold > span:has([style*=\"--textOzon\"])"]
+      Product:
+        description: "Страница товара"
+        selectors:
+          - title: "Хештеги"
+            selectors: ["[data-widget=\"webHashtags\"]"]
+      Other:
+        description: "Остальное"
+        selectors:
+          - title: "Подвал"
+            # Если выделить просто «footer», то будет неправильно отображаться скроллинг, дошедший до конца
+            selectors: ["footer > *"]
+          - title: "Синяя кнопка с вопросительным знаком"
+            description: "Появляется на странице товара. При нажатии отображает «Опрос о странице товаров»"
+            selectors: ["[data-widget=\"webFeedbackForm\"]"]
+  - title: "Reddit"
+    domains: ["reddit.com"]
+    selector_groups:
+      Ad:
+        description: "Реклама"
+        selectors:
+          - title: "Рекламные посты"
+            description: "Рекламные посты, появляющиеся посреди ленты через каждые 5-7 обычных постов"
+            tags: ["ad"]
+            selectors: ["shreddit-ad-post", "shreddit-ad-post + hr"]
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Кнопка «Advertise on Reddit»"
+            description: "Кнопка «Advertise on Reddit» вверху справа"
+            selectors: ["[data-part=\"advertise\"]"]
+      Sidebar:
+        description: "Сайдбар (панель слева)"
+        selectors:
+          - title: "«GAMES ON REDDIT»"
+            description: "Кнопка «Advertise on Reddit» вверху справа"
+            selectors: ["*:has(> games-section-badge-controller)", "*:has(> games-section-badge-controller) + hr"]
+      Post:
+        description: "Страница поста"
+        selectors:
+          - title: "Реклама под постом"
+            tags: ["ad"]
+            selectors: ["shreddit-comments-page-ad"]
+  - title: "Stack Overflow и Stack Exchange"
+    domains: ["stackoverflow.com", "superuser.com", "stackexchange.com"]
+    selector_groups:
+      LeftSidebar:
+        description: "Сайдбар (панель слева)"
+        selectors:
+          - title: "«AI Assist»"
+            description: "Пункт меню «AI Assist». Ведёт на страницу «https://stackoverflow.ai»"
+            selectors: ["#left-sidebar :has(> #nav-askstack)"]
+          - title: "«Jobs»"
+            description: "Пункт меню «Jobs»"
+            selectors: ["#left-sidebar :has(> #nav-labs-jobs)"]
+          - title: "«Companies»"
+            description: "Пункт меню «Companies»"
+            selectors: ["#left-sidebar :has(> #nav-companies)"]
+          - title: "«Collectives»"
+            description: "Какой-то функционал, названный «Collectives»"
+            selectors: ["#left-sidebar :has(> #nav-questions) ~ *:has([aria-controls=\"popover-discover-collectives\"])"]
+          - title: "«STACK INTERNAL»"
+            # Встретилось на портале anime.stackexchange.com
+            description: "Какой-то функционал, названный «Stack Internal». В ссылках есть слово Teams"
+            selectors:
+              - "#left-sidebar .nav-links > :has([href^=\"https://stackoverflowteams.com/teams/\"])"
+              - "#left-sidebar .nav-links > :has([href^=\"https://stackoverflow.co/internal/\"])"
+              - "#left-sidebar .nav-links > :has(+ * [href^=\"https://stackoverflow.co/internal/\"])"
+              - "#left-sidebar .nav-links > :has([href^=\"https://stackoverflow.co/internal/\"]) + li"
+          - title: "«Articles»"
+            description: "Ссылка на раздел блога Stack Overflow со статьями, сгенерированными пользователями Stack Overflow"
+            selectors: ["#left-sidebar .nav-links :has(> [href^=\"https://stackoverflow.blog/contributed\"])"]
+          - title: "Collectives"
+            description: "Какой-то функционал, названный «Collectives». Расположено ниже всех пунктов навигационного меню сайдбара"
+            selectors: ["#left-sidebar .nav-links > * :has(> [href=\"/collectives-all\"])"]
+      RightSidebar:
+        description: "Сайдбар (панель справа)"
+        selectors:
+          - title: "Блог"
+            description: "Ссылки на статьи из блога Stack Overflow"
+            selectors: ["#sidebar > :has([href^=\"https://stackoverflow.blog/\"])"]
+          - title: "Collectives"
+            description: "Блок «Collectives» (коллективы; например, Google Cloud, AWS, Microsoft Azure)"
+            selectors: ["#sidebar > :has([href=\"/collectives-all\"])"]
+          - title: "Hot Network Questions"
+            description: "Блок с вопросами из других платформ Stack Exchange"
+            selectors: ["#hot-network-questions"]
+          - title: "Community activity"
+            description: "Блок со статистикой сайта"
+            selectors: ["#sidebar :has(> stack-heartbeat-liveliness)"]
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Кнопка Help Center"
+            description: "Круглая кнопка со всплывающим меню. Расположена там, где ряд кнопок правее от аватарки сверху справа"
+            selectors: [":has(> #search) > nav > ol > li:has(> a[href=\"/help\"])"]
+          - title: "Кнопка сайтов Stack Exchange"
+            description: "Круглая кнопка со всплывающим списком сайтов Stack Exchange. Расположена там, где ряд кнопок правее от аватарки сверху справа"
+            selectors: [":has(> #search) > nav > ol > li:has([href=\"https://stackexchange.com\"])"]
+          - title: "Ссылка «Products»"
+            description: "Ссылка «Products» левее от логотипа Stack Overflow и правее от поисковой строки"
+            selectors: [":has(> #search) li:has([data-text=\"Products\"])"]
+      QuestionPage:
+        description: "Веб-страница вопроса"
+        selectors:
+          - title: "Авторизоваться для ответа"
+            description: "Форма авторизации, расположенная ниже формы ввода ответа. Отображается только у неавторизованных пользователей, т.е. у гостей"
+            selectors: ["#answers #post-form .new-login-form"]
+          - title: "Предупреждение о Privacy Policy"
+            description: "Предупреждение следующего содержания: «By clicking “Post Your Answer”, you agree to our terms of service and acknowledge you have read our privacy policy». Отображается только у неавторизованных пользователей, т.е. у гостей"
+            # «#post-form» — это работает если Stack Overflow разрешает оставить
+            # ответ под вопросом. Если такой формы нет, то и Privacy Policy
+            # соответственно тоже нету.
+            selectors: ["#answers #post-form .form-submit :has(> [href*=\"privacy-policy\"])"]
+          - title: "Предложение задать вопрос и исследовать теги"
+            description: "Предложение задать новый вопрос («Start asking to get answers») и исследовать теги («Explore related questions»)"
+            # ВАЖНО, что Stack Overflow может не разрешать добавлять новые
+            # ответы. Прошлый селектор, который это НЕ учитывал:
+            # ```
+            # #answers #post-form + .js-bottom-notice
+            # ```
+            selectors: ["#answers .js-bottom-notice"]
+      Other:
+        description: "Остальное"
+        selectors:
+          - title: "«Вход через аккаунт Google»"
+            description: "Попап «Вход через аккаунт Google» справа сверху"
+            selectors: ["#credential_picker_container"]
+          - title: "Подвал"
+            # У портала anime.exchange.com довольно красивая зарисовка в подвале, поэтому решил её оставить, а всё остальное скрыть.
+            selectors: ["footer > *"]
+          - title: "Cookie"
+            description: "Огромное предупреждение о куки («We Care About Your Privacy»), занимающее почти всю высоту левой части экрана"
+            selectors: ["#onetrust-banner-sdk"]
+  - title: "Shikimori (Шикимори)"
+    domains: ["shikimori.one"]
+    selector_groups:
+      MainPage:
+        description: "Заглавная страница"
+        selectors:
+          - title: "«Темы дня»"
+            description: "Панель «Темы дня» сверху"
+            selectors: [".b-hot_topics-v2"]
+      Other:
+        description: "Остальное"
+        selectors:
+          - title: "Подвал"
+            selectors: ["footer"]
+      Sidebar:
+        description: "Сайдбар (панель справа)"
+        selectors:
+          - title: "Реклама"
+            description: "Пункт меню «AI Assist». Ведёт на страницу «https://stackoverflow.ai»"
+            selectors: [".b-animes-menu .spns_special_x300", ".b-animes-menu .spns_special_mini"]
+  - title: "Pinterest (пинтерест)"
+    domains: ["pinterest.com"]
+    selector_groups:
+      Other:
+        description: "Остальное"
+        selectors:
+          - title: "«Вход через аккаунт Google»"
+            description: "Попап «Вход через аккаунт Google» справа сверху"
+            # Альтернативный селектор:
+            # ```
+            # :has(> iframe[src*="accounts.google.com/gsi/iframe"])
+            # ```
+            selectors: ["#credential_picker_container"]
+  - title: "Twitter / X (твиттер / икс)"
+    domains: ["x.com", "twitter.com"]
+    selector_groups:
+      Other:
+        description: "Остальное"
+        selectors:
+          - title: "«Вход через аккаунт Google»"
+            description: "Попап «Вход через аккаунт Google» справа сверху"
+            selectors: ["#credential_picker_container"]
+          - title: "«Мы используем файлы cookie»"
+            selectors: ["[data-testid=\"BottomBar\"]:has(button)"]
+          - title: "«Будьте в курсе событий»"
+            description: "Панель внизу с предложением войти или зарегистрироваться"
+            selectors: ["[data-testid=\"BottomBar\"]:has([href^=\"/login\"])"]
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Нижний колонтитул"
+            description: "Нижний колонтитул сайдбара и заглавного меню (https://x.com) с «Условия предоставления услуг», «Политика конфиденциальности», «Политика в отношении файлов cookie», «Специальные возможности», «Информация о рекламе» и «© 2025 X Corp.»"
+            # Прошлый селектор (охватывал только сайдбар, размещаемый в сайдбаре (т.е. панели справа)):
+            # ```
+            # [data-testid=\"sidebarColumn\"] :has(> [aria-label=\"Нижний колонтитул\"])
+            # ```
+            selectors: [":has(> [aria-label=\"Нижний колонтитул\"])"]
+  - title: "MyAnimeList (MAL)"
+    domains: ["myanimelist.net"]
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Баннер-реклама в самом верху"
+            description: "Баннер-реклама ведёт на страницу https://mxj.myanimelist.net/"
+            selectors: [":has(~ #header-menu)"]
+          - title: "Кнопка «Hide Ads»"
+            description: "Оранжевая кнопка «Hide Ads» левее кнопок «Login» и «Sign Up»"
+            selectors: ["#header-menu [data-ga-impression-type=\"hide-ads\"]"]
+          - title: "Подвал"
+            selectors: ["footer"]
+          - title: "Подвал с ТОПами по аниме, аниме-персонажам и т.д."
+            selectors: [".footer-ranking"]
+  - title: "Ями Аниме (Yummy Anime)"
+    domains: ["site.yummyani.me"]
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Общий чат"
+            description: "Круглая кнопка общего чата внизу справа (будто это кнопка Поддержки)"
+            selectors: ["#chatter"]
+          - title: "Подвал"
+            selectors: ["footer"]
+      Sidebar:
+        description: "Сайдбар (панель справа)"
+        selectors:
+          - title: "Статистика"
+            selectors: [".sidebar :has(> .statistics-body)"]
+          - title: "Постеры"
+            description: "Постеры со ссылками на Discord, Telegram, ВК, Boosty и Пикабу"
+            selectors: [".sidebar .posters-side"]
+  - title: "Wildberries"
+    domains: ["wildberries.ru"]
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Чат с Поддержкой"
+            description: "Фиолетовая круглая кнопка справа внизу"
+            selectors: ["#mainContainer [aria-label=\"Чат\"]"]
+      MainPage:
+        description: "Заглавная страница"
+        selectors:
+          - title: "Баннеры"
+            description: "1) Длинный тонкий баннер на заглавной странице. На момент ноября 2025 отображает чёрный фон с летающими розово-фиолетовыми «процентами»; есть надписи «Разгар скидок» и «Чёрная пятница». 2) Карусель из больших баннеров. 3) Рандомные большие баннеры, которые появляются между плитками товаров"
+            selectors: [".main-page__banner-info:has(.swiper-container)", ".main-page__banner:has(.swiper-container)", ".main-page__banners"]
+      SearchResults:
+        description: "Страница поисковой выдачи"
+        selectors:
+          - title: "Предложения поиска"
+            description: "«Вместе с этим запросом ищут»"
+            selectors: [".catalog-page__main .search-tags"]
+          - title: "Предложения иных товаров"
+            description: "«Возможно, вам понравится:»"
+            selectors: [".catalog-page__main .catalog-page__section"]
+  - title: "MyGreekDish"
+    domains: ["mygreekdish.com"]
+    selector_groups:
+      RecipePage:
+        description: "Веб-страница рецепта"
+        selectors:
+          - title: "Текст-вода"
+            description: "Рекламный текст, не относящийся ни к ингредиентам, ни к конкретной инструкции приготовления"
+            selectors:
+              - "*:has(~ * > .tasty-recipes-entry-content)"
+              - "*:has(~ .tasty-recipes-entry-content)"
+              - "*:has(~ .tasty-recipes-ingredients)"
+              - ":has(~ * > * > .tasty-recipes-entry-content)"
+  - title: "Форум War Thunder"
+    domains: ["forum.warthunder.ru"]
+    selector_groups:
+      WebUi:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Подвал"
+            selectors: [".footer"]
+  - title: "MediaWiki"
+    description: "Википедия, Викисловарь, Викитека, Викиданные, Fandom и др. сайты на движке MediaWiki"
+    domains:
+      - "mediawiki.org"
+      - "wikipedia.org"
+      - "wiktionary.org"
+      - "wikibooks.org"
+      - "wikivoyage.org"
+      - "wikisource.org"
+      - "wikiversity.org"
+      - "wikinews.org"
+      - "wikiquote.org"
+      - "wikidata.org"
+      - "wikimedia.org"
+      - "fandom.com"
+      - "neerc.ifmo.ru"
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Подвал"
+            selectors: [".mw-footer"]
+          - title: "Дисклеймер"
+            description: "Дисклеймер «Материал из Википедии — свободной энциклопедии»"
+            selectors: ["#content #siteSub"]
+  - title: "GitHub (гитхаб)"
+    domains: ["github.com"]
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Подвал"
+            selectors: ["footer.footer"]
+      Sidebar:
+        description: "Сайдбар (панель слева)"
+        selectors:
+          - title: "Пункт «Copilot»"
+            selectors: ["ul[class*=\"ActionList-GroupList\"] :has(> a[href=\"/copilot\"])"]
+      UserMenu:
+        description: "Всплывашка, появляющаяся по нажатию на свою аватарку справа сверху"
+        selectors:
+          - title: "Пункт «Copilot settings»"
+            selectors: [":has(> [aria-label=\"User navigation\"]) :has(> * > [href*=\"tab=repositories\"]) :has(> [href=\"/settings/copilot\"])"]
+          - title: "Пункт «Try Enterprise»"
+            selectors: [":has(> [aria-label=\"User navigation\"]) :has(> * > [href*=\"tab=repositories\"]) :has(> [href*=\"/organizations/enterprise_plan\"])"]

@@ -16,6 +16,7 @@ PUSHD "!CURRENT_DIR!"
     SET "DATA_DIR=data"
     SET "OUTPUT_DIR=build"
     SET "COSMETIC_FILTERS_OUTPUT_FILE_PATH=cosmetic_filters.txt"
+    SET "HEADER_FILE_PATH=template\cosmetic_filters-header.txt"
     
     SET "data_dir=!SCRIPT_DIR!\!DATA_DIR!"
     SET "output_dir=!SCRIPT_DIR!\!OUTPUT_DIR!"
@@ -29,6 +30,11 @@ PUSHD "!CURRENT_DIR!"
     SET "cosmetic_filters_output_path=!OUTPUT_DIR!\!COSMETIC_FILTERS_OUTPUT_FILE_PATH!"
     IF EXIST "!cosmetic_filters_output_path!" (
         DEL /Q "!cosmetic_filters_output_path!"
+    )
+    
+    SET "header_file_path=!SCRIPT_DIR!\!HEADER_FILE_PATH!"
+    IF EXIST "!header_file_path!" (
+        TYPE "!header_file_path!" > "!cosmetic_filters_output_path!"
     )
     
     PUSHD "!data_dir!"
@@ -57,7 +63,14 @@ PUSHD "!CURRENT_DIR!"
     POPD
     
     IF EXIST "!cosmetic_filters_output_path!" (
-        ECHO Сгенерированный файл: «!cosmetic_filters_output_path!».
+        FC "!cosmetic_filters_output_path!" "!header_file_path!" > NUL
+        SET "exitcode=!ERRORLEVEL!"
+        IF "!exitcode!" == "0" (
+            ECHO Не удалось сгенерировать файл «!cosmetic_filters_output_path!».
+            EXIT /B 1
+        ) ELSE (
+            ECHO Сгенерированный файл: «!cosmetic_filters_output_path!».
+        )
     ) ELSE (
         ECHO Не удалось сгенерировать файл «!cosmetic_filters_output_path!».
         EXIT /B 1

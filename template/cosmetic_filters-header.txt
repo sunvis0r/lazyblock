@@ -1,0 +1,7 @@
+[uBlock Origin 1.0]
+! Title: lazyblock
+! Description: The list of useful uBlock Origin cosmetic filters
+! Author: sunvis0r
+! Version: 0.1.0
+! Expires: 1 day
+! Homepage: https://github.com/sunvis0r/lazyblock

@@ -3,13 +3,21 @@ filters:
     domains: ["google.com"]
     # Google известен своими обфускациями DOM-дерева.
     selector_groups:
+      ImagesSearchResults:
+        description: "Поиск картинок"
+        selectors:
+          - title: "«Похожие запросы»"
+            description: "Удаление любых блоков, что находятся среди картинок но не являются таковыми (например, блок «Похожие запросы»)"
+            selectors: ["#main #res #search :has(> [data-lpage]) > :has(~ [data-lpage]):not([data-lpage])"]
       SearchResults:
-        description: "Селекторы, работающие в поисковой выдаче (например, https://www.google.com/search?q=example)"
+        description: "Поисковая выдача (например, https://www.google.com/search?q=example)"
         selectors:
           - title: "Подвал"
-            #description:
             tags: ["junk"]
             selectors: ["footer", "#sfooter"]
+          - title: "Реклама"
+            description: "Реклама в поисковой выдаче. Надписи: «Реклама», «Скрыть рекламу»"
+            selectors: [":has(> #bottomads)"]
           #- title: "Приложения Google и кнопка «Войти»"
           #  #description:
           #  tags: ["junk"]
@@ -37,7 +45,9 @@ filters:
               - "#main :has(~ #center_col[role=\"main\"] h1)"
           - title: "«Вопросы по теме» и «Другие также ищут»"
             description: "Набор дополнительных поисковых запросов ВЫШЕ поисковой выдачей и НИЖЕ"
-            selectors: ["#main [data-initq]"]
+            selectors:
+              - "#main [data-initq]"  # Один раз этот селектор НИЖЕ поисковой выдачи НЕ ВСТРЕТИЛСЯ
+              - "#main #botstuff :has(~ [role=\"navigation\"]):has([data-q])"
           - title: "Пояснения к фильтрации результатов"
             description: "Текст «Некоторые результаты поиска могли быть удалены в соответствии с местным законодательством»"
             selectors: ["#main #botstuff > * > :has([href$=\"/policies/faq\"])"]
@@ -92,8 +102,11 @@ filters:
         description: "Веб-страница с открытым видео"
         selectors:
           - title: "Магазин"
-            description: "Товары, предлагаемые YouTube'ом и автором видео к покупке (например, «Товары магазина \"Channel Author\"»)"
+            description: "Товары, предлагаемые YouTube'ом и автором видео к покупке (например, «Товары магазина \"Channel Author\"»). Находится ниже блока с описанием"
             selectors: ["#primary #below > ytd-merch-shelf-renderer"]
+          - title: "Всё, что ниже описания"
+            description: "Всё, что внутри блока описания видео (внизу этого блока), но не является самим текстовым описанием. Тексты: «Как это было сделано» («Автодубляж», «Звуковые дорожки на некоторых языках были созданы автоматически. Подробнее»), «Расшифровка видео» («Расшифровка позволяет быстро находить в видео нужную информацию» и кнопка «Показать текст видео»)"
+            selectors: ["#primary #below ytd-watch-metadata #description #structured-description"]
           - title: "Кнопка «Стать спонсором»"
             description: "Кнопка «Стать спонсором», находящаяся левее кнопки «Подписаться»"
             selectors: ["#primary #sponsor-button"]
@@ -132,20 +145,36 @@ filters:
             description: "Сам Ozon никак не описывает для чего они"
             tags: ["junk"]
             selectors: [".tile-root .tsBodyMBold > span:has([style*=\"--textOzon\"])"]
-      Product:
+          - title: "Логотип бренда"
+            description: "Логотип бренда, помещаемый поверх изображения продукта в верхнем левом краю"
+            # Как проверять работоспособность селектора: искать «кетчуп», искать «макароны», искать «Яшкино»
+            selectors: [".tile-root > a:has(img[fetchpriority=\"auto\"])"]
+      ProductPage:
         description: "Страница товара"
         selectors:
           - title: "Хештеги"
             selectors: ["[data-widget=\"webHashtags\"]"]
-      Other:
-        description: "Остальное"
+          - title: "Синяя кнопка с вопросительным знаком"
+            description: "Появляется на странице товара. При нажатии отображает «Опрос о странице товаров»"
+            selectors: ["[data-widget=\"webFeedbackForm\"]"]
+          - title: "Реклама в комментариях"
+            description: "Блоки с товарами между каждыми тремя комментариями. Текст: «Рекомендуем также»"
+            selectors: ["[data-widget=\"webReviewTabs\"] :has(> [data-widget=\"webListReviews\"]) > [data-widget=\"skuGrid\"]"]
+      WebUI:
+        description: "Веб-интерфейс"
         selectors:
           - title: "Подвал"
             # Если выделить просто «footer», то будет неправильно отображаться скроллинг, дошедший до конца
             selectors: ["footer > *"]
-          - title: "Синяя кнопка с вопросительным знаком"
-            description: "Появляется на странице товара. При нажатии отображает «Опрос о странице товаров»"
-            selectors: ["[data-widget=\"webFeedbackForm\"]"]
+          - title: "Навигационная панель сверху"
+            description: "Навигационная панель сверху со следующими ссылками: «Ozon fresh», «Ozon карта», «Билеты, отели», «Для бизнеса», «Одежда», «Электроника», «Дом и сад», «Товары за 1₽», «Сертификаты». Проблема в том, что для доступа к каталогам продуктов всегда есть кнопка «Каталог» правее логотипа. Данная навигационная панель содержит скорее больше мусора, чем полезных ссылок"
+            selectors: ["#layoutPage [data-widget=\"header\"] [data-widget=\"horizontalMenu\"]:has([href*=\"/travel/?\"])"]
+          - title: "Просьба о помощи"
+            description: "Тонкий длинный баннер с надписью «ПОМОГИТЕ ТЕМ, КТО НУЖДАЕТСЯ» и белой кнопкой «Помочь»"
+            selectors: ["#layoutPage [data-widget=\"header\"] ~ :has([href=\"https://www.ozon.ru/special/care/\"])"]
+          - title: "Куки"
+            description: "Квадратное окошко о куки с надписью «Используем куки и рекомендательные технологии» и синей кнопкой «ОК»"
+            selectors: ["#layoutPage :has( > * > [data-widget=\"cookieBubble\"])"]
   - title: "Reddit"
     domains: ["reddit.com"]
     selector_groups:
@@ -388,6 +417,9 @@ filters:
           - title: "Предложения иных товаров"
             description: "«Возможно, вам понравится:»"
             selectors: [".catalog-page__main .catalog-page__section"]
+          - title: "Надписи на изображении товара"
+            description: "Надписи поверх изображения товара (карточки товара), например: «ХОРОШАЯ ЦЕНА», «ЧЁРНАЯ ПЯТНИЦА», «200 ₽ ЗА ОТЗЫВ», «−65%» (или любое другое число)"
+            selectors: [".product-card .product-card__tips"]
   - title: "MyGreekDish"
     domains: ["mygreekdish.com"]
     selector_groups:
@@ -442,11 +474,39 @@ filters:
         selectors:
           - title: "Подвал"
             selectors: ["footer.footer"]
-      Sidebar:
+      Header:
+        description: "Шапка сайта"
+        selectors:
+          - title: "Кнопка «Chat with Copilot»"
+            selectors: [".AppHeader .AppHeader-CopilotChat"]
+      SidebarLeft:
         description: "Сайдбар (панель слева)"
         selectors:
           - title: "Пункт «Copilot»"
             selectors: ["ul[class*=\"ActionList-GroupList\"] :has(> a[href=\"/copilot\"])"]
+      SidebarRight:
+        description: "Сайдбар (панель справа)"
+        selectors:
+          - title: "«Readme»"
+            description: "Ссылка-дубль на README. Проблема в том, что README как бы на экране показывается, а значит дополнительная ссылка не нужна"
+            selectors: [".repository-content .Layout-sidebar :has(> [href^=\"#readme\"])"]
+          - title: "Ссылка на релизы"
+            description: "Является дублем такой же ссылки, стоящей выше (h2-заголовок))"
+            selectors: [".repository-content .Layout-sidebar :has(> [href$=\"/releases\"]):not(h2)"]
+          - title: "Скрытие блока с релизами если он пустой"
+            description: "Скрытие блока с релизами если ни одного релиза или тега нету (для чужих репозиториев)"
+            # ВАЖНО, что если блок у чужого репозитория — то скрывать можно, а
+            # если у своего — нежелательно, т.к. там есть ссылка на создание
+            # релиза (а эта ссылка — единственная в веб-интерфейсе для создания
+            # релиза).
+            selectors: [".repository-content .Layout-sidebar .BorderGrid-row:has(a[href$=\"/releases\"]):not(:has([href*=\"/releases/\"]))"]
+          - title: "Скрытие блока с пакетами если он пустой"
+            description: "Скрытие блока с пакетами если ни одного пакета нету (для чужих репозиториев)"
+            # ВАЖНО, что если блок у чужого репозитория — то скрывать можно, а
+            # если у своего — нежелательно, т.к. там есть ссылка на создание
+            # пакета (а эта ссылка — единственная в веб-интерфейсе для создания
+            # пакета).
+            selectors: [".repository-content .Layout-sidebar .BorderGrid-row:has([href*=\"/packages\"]):not(:has(ul [href*=\"/packages\"])):not(:has(h2 + div > a))"]
       UserMenu:
         description: "Всплывашка, появляющаяся по нажатию на свою аватарку справа сверху"
         selectors:
@@ -519,3 +579,88 @@ filters:
         selectors:
           - title: "Подвал"
             selectors: ["#footer"]
+  - title: "Microsoft Learn (Microsoft Docs)"
+    domains: ["learn.microsoft.com"]
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Баннер про машинный перевод"
+            description: "Баннер о том, что текст был переведён средствами машинного перевода. Текст: «Этот текст может быть частично переведен средствами машинного перевода или ИИ»"
+            selectors: ["#disclaimer-holder"]
+          - title: "Подвал"
+            selectors: [".layout-body-footer"]
+      SidebarLeft:
+        description: "Сайдбар (панель справа)"
+        selectors:
+          - title: "Фидбек (feedback) / обратная связь"
+            description: "Блок с вопросом: «Были ли сведения на этой странице полезными?»"
+            selectors: ["#layout-body-aside [data-test-id=\"site-user-feedback-right-rail\"]"]
+  - title: "MDN (Mozilla Developer Network) / Mozilla Web Docs"
+    domains: ["developer.mozilla.org"]
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Подвал"
+            selectors: [".page-layout__footer"]
+          - title: "Рекламный баннер"
+            description: "Баннер с рекламой выше всей веб-страницы. Текст: «Learn front-end development with high quality, interactive courses from Scrimba»"
+            selectors: [".page-layout__banner"]
+          - title: "Фидбек (feedback) / обратная связь"
+            description: "Блок с надписью «Help improve MDN» ниже основного содержания статьи"
+            selectors: [".article-footer[aria-labelledby=\"feedback\"]"]
+          - title: "Ссылка «Blog»"
+            description: "Ссылка «Blog» в верхней навигацонной панели"
+            selectors: [".page-layout__header .navigation__menu .menu__tab[data-section=\"blog\"]"]
+          - title: "Ссылка «About»"
+            description: "Всплывашка «About» в верхней навигацонной панели"
+            selectors: [".page-layout__header .navigation__menu .menu__tab[data-section=\"about\"]"]
+  - title: "W3C (Консорциум Всемирной паутины)"
+    domains: ["w3.org", "www.w3.org"]
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Подвал"
+            selectors: [".global-footer"]
+          - title: "Баннер о смене логотипа"
+            description: "Баннер о смене логотипа. Располагается выше всего на веб-странице. Текст: «We have a new logo! Learn more»"
+            selectors: [".global-header .banner:has([href=\"https://www.w3.org/press-releases/2025/new-logo/\"])"]
+  - title: "Python documentation"
+    domains: ["docc.python.org"]
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Подвал"
+            selectors: [".footer"]
+          - title: "Блок с выбором языка, версии Python и т.д."
+            description: "Блок с выбором языка, версии Python и темы, а также с поиском и ссылками. Проблема в том, что сверху полностью такая же панель уже есть"
+            selectors: [".related + .document + .related"]
+  - title: "AliExpress (иностранный)"
+    domains: ["aliexpress.com"]
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Подвал"
+            selectors: [".footer-wrap"]
+          - title: "Большая квадратная всплывашка"
+            description: "Большая квадратная всплывашка посередине экрана, которая затемняет весь экран"
+            # (Найдено здесь: https://nl.aliexpress.com/)
+            selectors: [".faas-home-page :has(> .image-poplayer-modal)"]
+          - title: "Маленькая квадратная всплывашка"
+            description: "Маленькая квадратная всплывашка в левом краю в нижней половине экрана"
+            # (Найдено здесь: https://nl.aliexpress.com/)
+            selectors: [".faas-home-page :has(> .drogue-poplayer-modal)"]
+  - title: "AliExpress (русский)"  # У Алиэкспрессов СИЛЬНО различающиеся веб-сайты
+    domains: ["aliexpress.ru"]
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Подвал"
+            selectors: ["#__aer_root__ [class*=\"RedFooter_RedFooter__root__\"]"]
+          - title: "Куки"
+            selectors: ["#__aer_root__ [class*=\"RecommendationFeedTabs\"] + [class*=\"SnowPrivacyPolicyBanner\"]"]

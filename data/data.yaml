@@ -1,6 +1,7 @@
 filters:
   - title: "Google"
     domains: ["google.com"]
+    # Google известен своими обфускациями DOM-дерева.
     selector_groups:
       SearchResults:
         description: "Селекторы, работающие в поисковой выдаче (например, https://www.google.com/search?q=example)"
@@ -9,15 +10,67 @@ filters:
             #description:
             tags: ["junk"]
             selectors: ["footer", "#sfooter"]
-          - title: "Приложения Google и кнопка «Войти»"
-            #description:
-            tags: ["junk"]
-            selectors: ["#searchform [action=\"/search\"] + div"]
+          #- title: "Приложения Google и кнопка «Войти»"
+          #  #description:
+          #  tags: ["junk"]
+          #  selectors: ["#searchform [action=\"/search\"] + div"]
           - title: "«Обзор от ИИ»"
-            selectors: ["*:has(> [data-al=\"Обзор от ИИ готов\"])"]
+            # Прошлый селектор, который перестал работать:
+            # ```
+            # :has(> [data-al="Обзор от ИИ готов"])
+            # ```
+            #
+            # Другие потенциально полезные подселекторы:
+            # ```
+            # [data-loaded="1"]
+            # [data-animation-nesting=""]
+            # ```
+            #
+            # Селектор, который с `:has([aria-label="Об этом результате"])` —
+            # срабатывает только ПОСЛЕ того как веб-страница получила ответ от
+            # бэкенда, т.е. блок для информации от ИИ будет висеть долю секунды,
+            # а у очень медленного интернет-соединения — несколько секунд.
+            # Поэтому прописал второй селектор (БЕЗ «Об этом результате»). Пока
+            # не сбоит. Пока работает.
+            selectors:
+              - "#main :has(~ #center_col[role=\"main\"] h1):has([aria-label=\"Об этом результате\"])"
+              - "#main :has(~ #center_col[role=\"main\"] h1)"
           - title: "«Вопросы по теме» и «Другие также ищут»"
             description: "Набор дополнительных поисковых запросов ВЫШЕ поисковой выдачей и НИЖЕ"
             selectors: ["#main [data-initq]"]
+          - title: "Пояснения к фильтрации результатов"
+            description: "Текст «Некоторые результаты поиска могли быть удалены в соответствии с местным законодательством»"
+            selectors: ["#main #botstuff > * > :has([href$=\"/policies/faq\"])"]
+          - title: "Голосовой поиск"
+            description: "Убирает кнопку голосового поиска, расположенную в поисковой строке между кнопками экранной клавиатуры и непосредственно поиска"
+            selectors: ["form[action=\"/search\"] :has(> textarea) + * [aria-label=\"Голосовой поиск\"]"]
+      TopNav:
+        description: "Верхняя навигационная панель"
+        selectors:
+            # `:not([__is_owner])` позволяет отфильтровать только те ссылки,
+            # которые НЕ в выпадающем меню «Ещё». Чтобы само меню «Ещё»
+            # не исчезало.
+            
+          - title: "«Режим ИИ»"
+            description: "Ссылка «Режим ИИ» в навигационной панели выше поисковой выдачи левее ссылки «Все» и «Картинки»"
+            # Нахождение селектора ОЧЕНЬ ТЯЖЕЛО.
+            # 
+            # URL-параметры, уникальные конкретно для ссылки «Режим ИИ» и
+            # отсутствующие у остальных ссылок:
+            # * `source`
+            # * `aep`
+            # * `ntc`
+            selectors: ["#main [role=\"navigation\"][tabindex=\"-1\"] [role=\"list\"] > :not(:has([aria-expanded])):first-of-type:has([href^=\"/search?\"][href*=\"ntc=\"])"]
+          - title: "«Короткие видео»"
+            description: "Ссылка «Короткие видео» в навигационной панели выше поисковой выдачи левее всплывашек «Ещё» и «Инструменты»"
+            # `udm=39`, судя по всему, однозначно определяет ссылку у бэкенда
+            # именно на короткие видео, а не на картинки, новости или покупки.
+            selectors: ["#main [role=\"navigation\"][tabindex=\"-1\"] [role=\"list\"] > :not(:has([aria-expanded])):has([href^=\"/search?\"][href*=\"udm=39\"])"]
+          - title: "«Новости»"
+            description: "Ссылка «Новости» в навигационной панели выше поисковой выдачи"
+            # `tbm=nws`, судя по всему, однозначно определяет ссылку у бэкенда
+            # именно на новости (nws - news), а не на картинки, новости или покупки.
+            selectors: ["#main [role=\"navigation\"][tabindex=\"-1\"] [role=\"list\"] > :not(:has([aria-expanded])):has([href^=\"/search?\"][href*=\"tbm=nws\"])"]
   - title: "YouTube"
     domains: ["youtube.com"]
     selector_groups:
@@ -429,3 +482,40 @@ filters:
         selectors:
           - title: "Реклама Авито Рекламы"
             selectors: ["#app [class*=\"avito-ads-container\"]"]
+  - title: "SteamDB"
+    domains: ["steamdb.info"]
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Подвал"
+            selectors: [".footer"]
+          - title: "«Support SteamDB»"
+            description: "Баннер с просьбой задонатить сайту. Надписи: «Ad-free Steam data for everyone since 2012», «Support SteamDB», «Donate or contribute»"
+            selectors: ["a[href=\"/donate/\"]"]
+          - title: "Подвал навигационного меню"
+            description: "Подвал навигационного меню, раскрываемого по нажатию на кнопку «Menu» сверху слева"
+            selectors:
+              - ".header-menu .header-socials"
+              - ".header-menu .header-disclaimer"
+              - ".header-menu .header-kbd"
+  - title: "Steam"
+    domains: ["store.steampowered.com"]
+    selector_groups:
+      MainPage:
+        description: "Заглавная страница"
+        selectors:
+          - title: "«Трансляция»"
+            description: "Значок «Трансляция» поверх тамбнейла некоторых игр на заглавной странице стима"
+            selectors: [".broadcast_live_stream_icon"]
+          - title: "Предложение авторизоваться"
+            description: "Блок с надписями «Ищете рекомендации?», «Войдите, чтобы просмотреть личные рекомендации» и «Или присоединитесь к Steam бесплатно», а также кнопкой «Войти»"
+            selectors: [".responsive_page_content #content_login"]
+          - title: "Предложение авторизоваться"
+            description: "Блок с надписями «Вы не вошли в аккаунт!», «Откройте эту страницу в приложении Steam, чтобы купить продукт, добавить его в желаемое, подписаться на него и увидеть рекомендации» и большой белой кнопкой «Открыть в настольном приложении»"
+            selectors: [".responsive_page_content .banner_open_in_steam"]
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Подвал"
+            selectors: ["#footer"]

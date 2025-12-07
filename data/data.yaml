@@ -8,8 +8,13 @@ filters:
         super_selector: "#main"
         selectors:
           - title: "«Похожие запросы»"
-            description: "Удаление любых блоков, что находятся среди картинок но не являются таковыми (например, блок «Похожие запросы»)"
-            selectors: ["#res #search :has(> [data-lpage]) > :has(~ [data-lpage]):not([data-lpage])"]
+            description: >-
+              Удаление любых блоков, что находятся среди картинок но не являются
+              таковыми (например, блок «Похожие запросы»)
+            selectors:
+              - >-
+                #res #search :has(> [data-lpage]) >
+                :has(~ [data-lpage]):not([data-lpage])
       WebUI:
         description: "Веб-интерфейс"
         selectors:
@@ -17,15 +22,24 @@ filters:
             tags: ["junk"]
             selectors: ["footer", "#sfooter"]
           - title: "Голосовой поиск"
-            description: "Убирает кнопку голосового поиска, расположенную в поисковой строке между кнопками экранной клавиатуры и непосредственно поиска"
-            # Данный селектор работает как на странице поиска, так и на заглавной странице Google
-            selectors: ["form[action=\"/search\"] :has(> textarea) + * [aria-label=\"Голосовой поиск\"]"]
+            description: >-
+              Убирает кнопку голосового поиска, расположенную в поисковой строке
+              между кнопками экранной клавиатуры и непосредственно поиска
+            # Данный селектор работает как на странице поиска, так и на
+            # заглавной странице Google.
+            selectors:
+              - >-
+                form[action="/search"] :has(> textarea) + *
+                [aria-label="Голосовой поиск"]
       SearchResultsPage:
-        description: "Веб-страница поисковой выдачи (например, https://www.google.com/search?q=example)"
+        description: >-
+          Веб-страница поисковой выдачи
+          (например, https://www.google.com/search?q=example)
         super_selector: "#main"
         selectors:
           - title: "Реклама"
-            description: "Реклама в поисковой выдаче. Надписи: «Реклама», «Скрыть рекламу»"
+            description: >-
+              Реклама в поисковой выдаче. Надписи: «Реклама», «Скрыть рекламу»
             # Прошлые неудачные селекторы:
             # ```
             # :has(> #bottomads)
@@ -58,16 +72,21 @@ filters:
             # Поэтому прописал второй селектор (БЕЗ «Об этом результате»). Пока
             # не сбоит. Пока работает.
             selectors:
-              - ":has(~ #center_col[role=\"main\"] h1):has([aria-label=\"Об этом результате\"])"
-              - ":has(~ #center_col[role=\"main\"] h1)"
+              - ':has(~ #center_col[role="main"] h1):has([aria-label="Об этом результате"])'
+              - ':has(~ #center_col[role="main"] h1)'
           - title: "«Вопросы по теме» и «Другие также ищут»"
-            description: "Набор дополнительных поисковых запросов ВЫШЕ поисковой выдачей и НИЖЕ"
+            description: >-
+              Набор дополнительных поисковых запросов ВЫШЕ поисковой выдачей
+              и НИЖЕ
             selectors:
-              - "[data-initq]"  # Один раз этот селектор НИЖЕ поисковой выдачи НЕ ВСТРЕТИЛСЯ
-              - "#botstuff :has(~ [role=\"navigation\"]):has([data-q])"
+              - '[data-initq]'  # Один раз этот селектор НИЖЕ поисковой выдачи
+                                # НЕ ВСТРЕТИЛСЯ!
+              - '#botstuff :has(~ [role="navigation"]):has([data-q])'
           - title: "Пояснения к фильтрации результатов"
-            description: "Текст «Некоторые результаты поиска могли быть удалены в соответствии с местным законодательством»"
-            selectors: ["#botstuff > * > :has([href$=\"/policies/faq\"])"]
+            description: >-
+              Текст «Некоторые результаты поиска могли быть удалены
+              в соответствии с местным законодательством»
+            selectors: ['#botstuff > * > :has([href$="/policies/faq"])']
       SearchPageTopNav:
         description: "Верхняя навигационная панель"
         super_selector: "#main"
@@ -77,7 +96,9 @@ filters:
             # не исчезало.
             
           - title: "«Режим ИИ»"
-            description: "Ссылка «Режим ИИ» в навигационной панели выше поисковой выдачи левее ссылки «Все» и «Картинки»"
+            description: >-
+              Ссылка «Режим ИИ» в навигационной панели выше поисковой выдачи
+              левее ссылки «Все» и «Картинки»
             # Нахождение селектора ОЧЕНЬ ТЯЖЕЛО.
             # 
             # URL-параметры, уникальные конкретно для ссылки «Режим ИИ» и
@@ -85,17 +106,29 @@ filters:
             # * `source`
             # * `aep`
             # * `ntc`
-            selectors: ["[role=\"navigation\"][tabindex=\"-1\"] [role=\"list\"] > :not(:has([aria-expanded])):first-of-type:has([href^=\"/search?\"][href*=\"ntc=\"])"]
+            selectors:
+              - >-
+                [role="navigation"][tabindex="-1"] [role="list"] >
+                :not(:has([aria-expanded])):first-of-type:has([href^="/search?"][href*="ntc="])
           - title: "«Короткие видео»"
-            description: "Ссылка «Короткие видео» в навигационной панели выше поисковой выдачи левее всплывашек «Ещё» и «Инструменты»"
+            description: >-
+              Ссылка «Короткие видео» в навигационной панели выше
+              поисковой выдачи левее всплывашек «Ещё» и «Инструменты»
             # `udm=39`, судя по всему, однозначно определяет ссылку у бэкенда
             # именно на короткие видео, а не на картинки, новости или покупки.
-            selectors: ["[role=\"navigation\"][tabindex=\"-1\"] [role=\"list\"] > :not(:has([aria-expanded])):has([href^=\"/search?\"][href*=\"udm=39\"])"]
+            selectors:
+              - >-
+                [role="navigation"][tabindex="-1"] [role="list"] >
+                :not(:has([aria-expanded])):has([href^="/search?"][href*="udm=39"])
           - title: "«Новости»"
-            description: "Ссылка «Новости» в навигационной панели выше поисковой выдачи"
+            description: >-
+              Ссылка «Новости» в навигационной панели выше поисковой выдачи
             # `tbm=nws`, судя по всему, однозначно определяет ссылку у бэкенда
             # именно на новости (nws - news), а не на картинки, новости или покупки.
-            selectors: ["[role=\"navigation\"][tabindex=\"-1\"] [role=\"list\"] > :not(:has([aria-expanded])):has([href^=\"/search?\"][href*=\"tbm=nws\"])"]
+            selectors:
+              - >-
+                [role="navigation"][tabindex="-1"] [role="list"] >
+                :not(:has([aria-expanded])):has([href^="/search?"][href*="tbm=nws"])
   - title: "YouTube"
     domains: ["youtube.com"]
     selector_groups:
@@ -113,33 +146,52 @@ filters:
         description: "Веб-страница поиска видео"
         selectors:
           - title: "Реклама"
-            description: "Реклама через каждые N элементов поисковой выдачи. Блоки рекламы оформлены как блоки видео (с тамбнейлом, заголовком, описанием)"
+            description: >-
+              Реклама через каждые N элементов поисковой выдачи. Блоки рекламы
+              оформлены как блоки видео (с тамбнейлом, заголовком, описанием)
             selectors: ["> ytd-ad-slot-renderer"]
       Sidebar:
         description: "Сайдбар (панель слева)"
         super_selector: "tp-yt-app-drawer ytd-guide-renderer#guide-renderer"
         selectors:
           - title: "Кнопка «Справка»"
-            description: "Кнопка «Справка» ниже кнопки «Жалобы» и выше кнопки «Отправить отзыв»"
-            selectors: ["#sections > * ytd-guide-entry-renderer:has([title=\"Справка\"])"]
+            description: >-
+              Кнопка «Справка» ниже кнопки «Жалобы»
+              и выше кнопки «Отправить отзыв»
+            selectors: ['#sections > * ytd-guide-entry-renderer:has([title="Справка"])']
           - title: "Кнопка «Отправить отзыв»"
-            description: "Кнопка «Отправить отзыв» ниже кнопки «Справка» и выше нижнего колонтитула"
-            selectors: ["#sections > * ytd-guide-entry-renderer:has([title=\"Отправить отзыв\"])"]
+            description: >-
+              Кнопка «Отправить отзыв» ниже кнопки «Справка»
+              и выше нижнего колонтитула
+            selectors: ['#sections > * ytd-guide-entry-renderer:has([title="Отправить отзыв"])']
           - title: "Нижний колонтитул"
-            description: "Нижний колонтитул сайдбара с «О сервисе», «Прессе», «Авторские права», «Связаться с нами», ..., «Условия использования», «Конфиденциальность» и т.д."
+            description: >-
+              Нижний колонтитул сайдбара с «О сервисе», «Прессе»,
+              «Авторские права», «Связаться с нами», ..., «Условия
+              использования», «Конфиденциальность» и т.д.
             selectors: ["#footer"]
       VideoPage:
         description: "Веб-страница с открытым видео"
         super_selector: "#primary"
         selectors:
           - title: "Магазин"
-            description: "Товары, предлагаемые YouTube'ом и автором видео к покупке (например, «Товары магазина \"Channel Author\"»). Находится ниже блока с описанием"
+            description: >-
+              Товары, предлагаемые YouTube'ом и автором видео к покупке
+              (например, «Товары магазина "Channel Author"»).
+              Находится ниже блока с описанием
             selectors: ["#below > ytd-merch-shelf-renderer"]
           - title: "Всё, что ниже описания"
-            description: "Всё, что внутри блока описания видео (внизу этого блока), но не является самим текстовым описанием. Тексты: «Как это было сделано» («Автодубляж», «Звуковые дорожки на некоторых языках были созданы автоматически. Подробнее»), «Расшифровка видео» («Расшифровка позволяет быстро находить в видео нужную информацию» и кнопка «Показать текст видео»)"
+            description: >-
+              Всё, что внутри блока описания видео (внизу этого блока),
+              но не является самим текстовым описанием. Тексты: «Как это было
+              сделано» («Автодубляж», «Звуковые дорожки на некоторых языках были
+              созданы автоматически. Подробнее»), «Расшифровка видео»
+              («Расшифровка позволяет быстро находить в видео нужную информацию»
+              и кнопка «Показать текст видео»)
             selectors: ["#below ytd-watch-metadata #description #structured-description"]
           - title: "Кнопка «Стать спонсором»"
-            description: "Кнопка «Стать спонсором», находящаяся левее кнопки «Подписаться»"
+            description: >-
+              Кнопка «Стать спонсором», находящаяся левее кнопки «Подписаться»
             selectors: ["#sponsor-button"]
   - title: "Ozon"
     domains: ["ozon.ru"]
@@ -150,62 +202,83 @@ filters:
         selectors:
           - title: "Одна огромная плитка-карусель с рекламой"
             tags: ["ad"]
-            selectors: ["[data-widget=\"advBanner\"]"]
+            selectors: ['[data-widget="advBanner"]']
           - title: "Полоса из реклам"
             tags: ["ad"]
-            selectors: ["[data-widget=\"imageList\"]:has([title=\"Реклама\"])"]
+            selectors: ['[data-widget="imageList"]:has([title="Реклама"])']
       ProductTiles:
         description: "Плитки товаров"
         super_selector: "#layoutPage .tile-root"
         selectors:
           - title: "«Чёрная пятница» поверх тамбнейла продукта"
             tags: ["junk"]
-            selectors: ["section:has([title=\"Чёрная пятница\"])"]
+            selectors: ['section:has([title="Чёрная пятница"])']
           - title: "«Вау-цены» поверх тамбнейла продукта"
             tags: ["junk"]
-            selectors: ["section:has([title=\"Вау-цены\"])"]
+            selectors: ['section:has([title="Вау-цены"])']
           - title: "«Цена что надо» поверх тамбнейла продукта"
             tags: ["junk"]
-            selectors: ["section:has([title=\"Цена что надо\"])"]
+            selectors: ['section:has([title="Цена что надо"])']
           - title: "Значок Ozon и надпись «Ozon» рядом с количеством отзывов"
             description: "Сам Ozon никак не описывает для чего они"
             tags: ["junk"]
-            selectors: [".tsBodyMBold > span:has([style*=\"--textOzon\"])"]
+            selectors: ['.tsBodyMBold > span:has([style*="--textOzon"])']
           - title: "Логотип бренда"
-            description: "Логотип бренда, помещаемый поверх изображения продукта в верхнем левом краю"
-            # Как проверять работоспособность селектора: искать «кетчуп», искать «макароны», искать «Яшкино»
-            selectors: ["> a:has(img[fetchpriority=\"auto\"])"]
+            description: >-
+              Логотип бренда, помещаемый поверх изображения продукта
+              в верхнем левом краю
+            # Как проверять работоспособность селектора: искать «кетчуп»,
+            # искать «макароны», искать «Яшкино»
+            selectors: ['> a:has(img[fetchpriority="auto"])']
       ProductPage:
         description: "Страница товара"
         super_selector: "#layoutPage"
         selectors:
           - title: "Хештеги"
-            selectors: ["[data-widget=\"webHashtags\"]"]
+            selectors: ['[data-widget="webHashtags"]']
           - title: "Синяя кнопка с вопросительным знаком"
-            description: "Появляется на странице товара. При нажатии отображает «Опрос о странице товаров»"
-            selectors: ["[data-widget=\"webFeedbackForm\"]"]
+            description: >-
+              Появляется на странице товара. При нажатии отображает
+              «Опрос о странице товаров»
+            selectors: ['[data-widget="webFeedbackForm"]']
           - title: "Реклама в комментариях"
-            description: "Блоки с товарами между каждыми тремя комментариями. Текст: «Рекомендуем также»"
-            selectors: ["[data-widget=\"webReviewTabs\"] :has(> [data-widget=\"webListReviews\"]) > [data-widget=\"skuGrid\"]"]
+            description: >-
+              Блоки с товарами между каждыми тремя комментариями.
+              Текст: «Рекомендуем также»
+            selectors:
+              - >-
+                [data-widget="webReviewTabs"] :has(>
+                [data-widget="webListReviews"]) > [data-widget="skuGrid"]
       WebUI:
         description: "Веб-интерфейс"
         super_selector: "#layoutPage"
         selectors:
           - title: "Подвал"
-            # Если выделить просто «footer», то будет неправильно отображаться скроллинг, дошедший до конца
+            # Если выделить просто «footer», то будет неправильно отображаться
+            # скроллинг, дошедший до конца
             selectors: ["footer > *"]
           - title: "Нижняя часть шапки"
             description: "Всё что является нижней частью шапки"
-            selectors: ["[data-widget=\"wallpaper\"] #stickyHeader ~ *"]
+            selectors: ['[data-widget="wallpaper"] #stickyHeader ~ *']
           - title: "Навигационная панель сверху"
-            description: "Навигационная панель сверху со следующими ссылками: «Ozon fresh», «Ozon карта», «Билеты, отели», «Для бизнеса», «Одежда», «Электроника», «Дом и сад», «Товары за 1₽», «Сертификаты». Проблема в том, что для доступа к каталогам продуктов всегда есть кнопка «Каталог» правее логотипа. Данная навигационная панель содержит скорее больше мусора, чем полезных ссылок"
-            selectors: ["[data-widget=\"header\"] [data-widget=\"horizontalMenu\"]:has([href*=\"/travel/?\"])"]
+            description: >-
+              Навигационная панель сверху со следующими ссылками: «Ozon fresh»,
+              «Ozon карта», «Билеты, отели», «Для бизнеса», «Одежда»,
+              «Электроника», «Дом и сад», «Товары за 1₽», «Сертификаты».
+              Проблема в том, что для доступа к каталогам продуктов всегда есть
+              кнопка «Каталог» правее логотипа. Данная навигационная панель
+              содержит скорее больше мусора, чем полезных ссылок
+            selectors: ['[data-widget="header"] [data-widget="horizontalMenu"]:has([href*="/travel/?"])']
           - title: "Просьба о помощи"
-            description: "Тонкий длинный баннер с надписью «ПОМОГИТЕ ТЕМ, КТО НУЖДАЕТСЯ» и белой кнопкой «Помочь»"
-            selectors: ["[data-widget=\"header\"] ~ :has([href=\"https://www.ozon.ru/special/care/\"])"]
+            description: >-
+              Тонкий длинный баннер с надписью «ПОМОГИТЕ ТЕМ, КТО НУЖДАЕТСЯ»
+              и белой кнопкой «Помочь»
+            selectors: ['[data-widget="header"] ~ :has([href="https://www.ozon.ru/special/care/"])']
           - title: "Куки"
-            description: "Квадратное окошко о куки с надписью «Используем куки и рекомендательные технологии» и синей кнопкой «ОК»"
-            selectors: [":has( > * > [data-widget=\"cookieBubble\"])"]
+            description: >-
+              Квадратное окошко о куки с надписью «Используем куки и
+              рекомендательные технологии» и синей кнопкой «ОК»
+            selectors: [':has( > * > [data-widget="cookieBubble"])']
   - title: "Reddit"
     domains: ["reddit.com"]
     selector_groups:
@@ -214,7 +287,9 @@ filters:
         super_selector: "shreddit-app shreddit-feed"
         selectors:
           - title: "Рекламные посты"
-            description: "Рекламные посты, появляющиеся посреди ленты через каждые 5-7 обычных постов"
+            description: >-
+              Рекламные посты, появляющиеся посреди ленты
+              через каждые 5-7 обычных постов
             tags: ["ad"]
             selectors: ["shreddit-ad-post", "shreddit-ad-post + hr"]
       WebUI:
@@ -223,7 +298,7 @@ filters:
         selectors:
           - title: "Кнопка «Advertise on Reddit»"
             description: "Кнопка «Advertise on Reddit» вверху справа"
-            selectors: ["[data-part=\"advertise\"]"]
+            selectors: ['[data-part="advertise"]']
       SidebarLeft:
         description: "Сайдбар (панель слева)"
         super_selector: "shreddit-app #left-sidebar-container"
@@ -234,21 +309,30 @@ filters:
               - ":has(> games-section-badge-controller)"
               - ":has(> games-section-badge-controller) + hr"
           - title: "«RESOURCES»"
-            description: "Блок «RESOURCES». Ссылки в блоке: «About Reddit», «Advertise», «Developer Platform», «Reddit Pro» («BETA»), «Help», «Blog», «Careers», «Press», «Communities», «Best of Reddit», «Reddit Rules», «Privacy Policy», «User Agreement», «Accessibility»"
-            selectors: [":has(> faceplate-expandable-section-helper #RESOURCES)"]
+            description: >-
+              Блок «RESOURCES». Ссылки в блоке: «About Reddit», «Advertise»,
+              «Developer Platform», «Reddit Pro» («BETA»), «Help», «Blog»,
+              «Careers», «Press», «Communities», «Best of Reddit»,
+              «Reddit Rules», «Privacy Policy», «User Agreement», «Accessibility»
+            selectors: [':has(> faceplate-expandable-section-helper #RESOURCES)']
           - title: "«All rights reserved»"
             description: "Надпись «Reddit, Inc. © 2025. All rights reserved.»"
-            selectors: [":has(> [href=\"https://redditinc.com\"])"]
+            selectors: [':has(> [href="https://redditinc.com"])']
       SidebarRight:
         description: "Сайдбар (панель справа)"
         super_selector: "shreddit-app #right-sidebar-container"
         selectors:
           - title: "Ссылки внизу сайдбара"
-            description: "Ссылки «Reddit Rules», «Privacy Policy», «User Agreement», «Accessibility» и ссылка (ссылка!) «Reddit, Inc. © 2025. All rights reserved.» внизу сайдбара"
+            description: >-
+              Ссылки «Reddit Rules», «Privacy Policy», «User Agreement»,
+              «Accessibility» и ссылка (ссылка!) «Reddit, Inc. © 2025.
+              All rights reserved.» внизу сайдбара
             selectors: [".legal-links"]
           - title: "Реклама ВЫШЕ и НИЖЕ сайдбара"
-            description: "Квадратные iframe-ы с рекламой выше и ниже сайдбара (панели справа). Надпись: «PROMOTED»"
-            selectors: ["[bundlename=\"sidebar_ad\"]"]
+            description: >-
+              Квадратные iframe-ы с рекламой выше и ниже сайдбара
+              (панели справа). Надпись: «PROMOTED»
+            selectors: ['[bundlename="sidebar_ad"]']
       PostPage:
         description: "Страница поста"
         super_selector: "shreddit-app"
@@ -277,7 +361,9 @@ filters:
         super_selector: "#left-sidebar"
         selectors:
           - title: "«AI Assist»"
-            description: "Пункт меню «AI Assist». Ведёт на страницу «https://stackoverflow.ai»"
+            description: >-
+              Пункт меню «AI Assist».
+              Ведёт на страницу «https://stackoverflow.ai»"
             selectors: [":has(> #nav-askstack)"]
           - title: "«Jobs»"
             description: "Пункт меню «Jobs»"
@@ -287,31 +373,39 @@ filters:
             selectors: [":has(> #nav-companies)"]
           - title: "«Collectives»"
             description: "Какой-то функционал, названный «Collectives»"
-            selectors: [":has(> #nav-questions) ~ *:has([aria-controls=\"popover-discover-collectives\"])"]
+            selectors: [':has(> #nav-questions) ~ *:has([aria-controls="popover-discover-collectives"])']
           - title: "«STACK INTERNAL»"
             # Встретилось на портале anime.stackexchange.com
-            description: "Какой-то функционал, названный «Stack Internal». В ссылках есть слово Teams"
+            description: >-
+              Какой-то функционал, названный «Stack Internal».
+              В ссылках есть слово Teams
             selectors:
-              - ".nav-links > :has([href^=\"https://stackoverflowteams.com/teams/\"])"
-              - ".nav-links > :has([href^=\"https://stackoverflow.co/internal/\"])"
-              - ".nav-links > :has(+ * [href^=\"https://stackoverflow.co/internal/\"])"
-              - ".nav-links > :has([href^=\"https://stackoverflow.co/internal/\"]) + li"
+              - '.nav-links > :has([href^="https://stackoverflowteams.com/teams/"])'
+              - '.nav-links > :has([href^="https://stackoverflow.co/internal/"])'
+              - '.nav-links > :has(+ * [href^="https://stackoverflow.co/internal/"])'
+              - '.nav-links > :has([href^="https://stackoverflow.co/internal/"]) + li'
           - title: "«Articles»"
-            description: "Ссылка на раздел блога Stack Overflow со статьями, сгенерированными пользователями Stack Overflow"
-            selectors: [".nav-links :has(> [href^=\"https://stackoverflow.blog/contributed\"])"]
+            description: >-
+              Ссылка на раздел блога Stack Overflow со статьями,
+              сгенерированными пользователями Stack Overflow
+            selectors: ['.nav-links :has(> [href^="https://stackoverflow.blog/contributed"])']
           - title: "Collectives"
-            description: "Какой-то функционал, названный «Collectives». Расположено ниже всех пунктов навигационного меню сайдбара"
-            selectors: [".nav-links > * :has(> [href=\"/collectives-all\"])"]
+            description: >-
+              Какой-то функционал, названный «Collectives».
+              Расположено ниже всех пунктов навигационного меню сайдбара
+            selectors: ['.nav-links > * :has(> [href="/collectives-all"])']
       RightSidebar:
         description: "Сайдбар (панель справа)"
         super_selector: "#sidebar"
         selectors:
           - title: "Блог"
             description: "Ссылки на статьи из блога Stack Overflow"
-            selectors: ["> :has([href^=\"https://stackoverflow.blog/\"])"]
+            selectors: ['> :has([href^="https://stackoverflow.blog/"])']
           - title: "Collectives"
-            description: "Блок «Collectives» (коллективы; например, Google Cloud, AWS, Microsoft Azure)"
-            selectors: ["> :has([href=\"/collectives-all\"])"]
+            description: >-
+              Блок «Collectives» (коллективы;
+              например, Google Cloud, AWS, Microsoft Azure)
+            selectors: ['> :has([href="/collectives-all"])']
           - title: "Hot Network Questions"
             description: "Блок с вопросами из других платформ Stack Exchange"
             selectors: ["#hot-network-questions"]
@@ -322,32 +416,52 @@ filters:
         description: "Веб-интерфейс"
         selectors:
           - title: "Кнопка Help Center"
-            description: "Круглая кнопка со всплывающим меню. Расположена там, где ряд кнопок правее от аватарки сверху справа"
-            selectors: [":has(> #search) > nav > ol > li:has(> a[href=\"/help\"])"]
+            description: >-
+              Круглая кнопка со всплывающим меню. Расположена там,
+              где ряд кнопок правее от аватарки сверху справа
+            selectors: [':has(> #search) > nav > ol > li:has(> a[href="/help"])']
           - title: "Кнопка сайтов Stack Exchange"
-            description: "Круглая кнопка со всплывающим списком сайтов Stack Exchange. Расположена там, где ряд кнопок правее от аватарки сверху справа"
-            selectors: [":has(> #search) > nav > ol > li:has([href=\"https://stackexchange.com\"])"]
+            description: >-
+              Круглая кнопка со всплывающим списком сайтов Stack Exchange.
+              Расположена там, где ряд кнопок правее от аватарки сверху справа
+            selectors: [':has(> #search) > nav > ol > li:has([href="https://stackexchange.com"])']
           - title: "Ссылка «Products»"
-            description: "Ссылка «Products» левее от логотипа Stack Overflow и правее от поисковой строки"
-            selectors: [":has(> #search) li:has([data-text=\"Products\"])"]
+            description: >-
+              Ссылка «Products» левее от логотипа Stack Overflow
+              и правее от поисковой строки
+            selectors: [':has(> #search) li:has([data-text="Products"])']
           - title: "Баннер об AI Assist"
-            description: "Длинный тонкий баннер, объявляющий о запуске фичи AI Assist на STack Overflow. Надпись: «AI Assist is now on Stack Overflow. Start a chat to get instant answers from across the network. Sign up to save and share your chats.». Впервые встречено на superuser.com будучи неавторизованным"
-            selectors: ["body > #announcement-banner:has([href*=\"//stackoverflow.com/ai-assist\"])"]
+            description: >-
+              Длинный тонкий баннер, объявляющий о запуске фичи AI Assist
+              на Stack Overflow. Надпись: «AI Assist is now on Stack Overflow.
+              Start a chat to get instant answers from across the network.
+              Sign up to save and share your chats.».
+              Впервые встречено на superuser.com будучи неавторизованным
+            selectors: ['body > #announcement-banner:has([href*="//stackoverflow.com/ai-assist"])']
       QuestionPage:
         description: "Веб-страница вопроса"
         super_selector: "#answers"
         selectors:
           - title: "Авторизоваться для ответа"
-            description: "Форма авторизации, расположенная ниже формы ввода ответа. Отображается только у неавторизованных пользователей, т.е. у гостей"
+            description: >-
+              Форма авторизации, расположенная ниже формы ввода ответа.
+              Отображается только у неавторизованных пользователей,
+              т.е. у гостей
             selectors: ["#post-form .new-login-form"]
           - title: "Предупреждение о Privacy Policy"
-            description: "Предупреждение следующего содержания: «By clicking “Post Your Answer”, you agree to our terms of service and acknowledge you have read our privacy policy». Отображается только у неавторизованных пользователей, т.е. у гостей"
+            description: >-
+              Предупреждение следующего содержания:
+              «By clicking “Post Your Answer”, you agree to our terms of service
+              and acknowledge you have read our privacy policy».
+              Отображается только у неавторизованных пользователей, т.е. у гостей
             # «#post-form» — это работает если Stack Overflow разрешает оставить
             # ответ под вопросом. Если такой формы нет, то и Privacy Policy
             # соответственно тоже нету.
-            selectors: ["#post-form .form-submit :has(> [href*=\"privacy-policy\"])"]
+            selectors: ['#post-form .form-submit :has(> [href*="privacy-policy"])']
           - title: "Предложение задать вопрос и исследовать теги"
-            description: "Предложение задать новый вопрос («Start asking to get answers») и исследовать теги («Explore related questions»)"
+            description: >-
+              Предложение задать новый вопрос («Start asking to get answers»)
+              и исследовать теги («Explore related questions»)
             # ВАЖНО, что Stack Overflow может не разрешать добавлять новые
             # ответы. Прошлый селектор, который это НЕ учитывал:
             # ```
@@ -361,10 +475,13 @@ filters:
             description: "Попап «Вход через аккаунт Google» справа сверху"
             selectors: ["#credential_picker_container"]
           - title: "Подвал"
-            # У портала anime.exchange.com довольно красивая зарисовка в подвале, поэтому решил её оставить, а всё остальное скрыть.
+            # У портала anime.exchange.com довольно красивая зарисовка в подвале,
+            # поэтому решил её оставить, а всё остальное скрыть.
             selectors: ["footer > *"]
           - title: "Cookie"
-            description: "Огромное предупреждение о куки («We Care About Your Privacy»), занимающее почти всю высоту левой части экрана"
+            description: >-
+              Огромное предупреждение о куки («We Care About Your Privacy»),
+              занимающее почти всю высоту левой части экрана
             selectors: ["#onetrust-banner-sdk"]
   - title: "Shikimori (Шикимори)"
     domains: ["shikimori.one"]
@@ -384,8 +501,12 @@ filters:
         description: "Сайдбар (панель справа)"
         selectors:
           - title: "Реклама"
-            description: "Пункт меню «AI Assist». Ведёт на страницу «https://stackoverflow.ai»"
-            selectors: [".b-animes-menu .spns_special_x300", ".b-animes-menu .spns_special_mini"]
+            description: >-
+              Пункт меню «AI Assist».
+              Ведёт на страницу «https://stackoverflow.ai»
+            selectors:
+              - ".b-animes-menu .spns_special_x300"
+              - ".b-animes-menu .spns_special_mini"
   - title: "Pinterest (пинтерест)"
     domains: ["pinterest.com"]
     selector_groups:
@@ -409,20 +530,25 @@ filters:
             description: "Попап «Вход через аккаунт Google» справа сверху"
             selectors: ["#credential_picker_container"]
           - title: "«Мы используем файлы cookie»"
-            selectors: ["[data-testid=\"BottomBar\"]:has(button)"]
+            selectors: ['[data-testid="BottomBar"]:has(button)']
           - title: "«Будьте в курсе событий»"
-            description: "Панель внизу с предложением войти или зарегистрироваться"
-            selectors: ["[data-testid=\"BottomBar\"]:has([href^=\"/login\"])"]
+            description: >-
+              Панель внизу с предложением войти или зарегистрироваться
+            selectors: ['[data-testid="BottomBar"]:has([href^="/login"])']
       WebUI:
         description: "Веб-интерфейс"
         selectors:
           - title: "Нижний колонтитул"
-            description: "Нижний колонтитул сайдбара и заглавного меню (https://x.com) с «Условия предоставления услуг», «Политика конфиденциальности», «Политика в отношении файлов cookie», «Специальные возможности», «Информация о рекламе» и «© 2025 X Corp.»"
+            description: >-
+              Нижний колонтитул сайдбара и заглавного меню (https://x.com)
+              с «Условия предоставления услуг», «Политика конфиденциальности»,
+              «Политика в отношении файлов cookie», «Специальные возможности»,
+              «Информация о рекламе» и «© 2025 X Corp.»
             # Прошлый селектор (охватывал только сайдбар, размещаемый в сайдбаре (т.е. панели справа)):
             # ```
             # [data-testid=\"sidebarColumn\"] :has(> [aria-label=\"Нижний колонтитул\"])
             # ```
-            selectors: [":has(> [aria-label=\"Нижний колонтитул\"])"]
+            selectors: [':has(> [aria-label="Нижний колонтитул"])']
   - title: "MyAnimeList (MAL)"
     domains: ["myanimelist.net"]
     selector_groups:
@@ -430,11 +556,13 @@ filters:
         description: "Веб-интерфейс"
         selectors:
           - title: "Баннер-реклама в самом верху"
-            description: "Баннер-реклама ведёт на страницу https://mxj.myanimelist.net/"
+            description: >-
+              Баннер-реклама ведёт на страницу https://mxj.myanimelist.net/
             selectors: [":has(~ #header-menu)"]
           - title: "Кнопка «Hide Ads»"
-            description: "Оранжевая кнопка «Hide Ads» левее кнопок «Login» и «Sign Up»"
-            selectors: ["#header-menu [data-ga-impression-type=\"hide-ads\"]"]
+            description: >-
+              Оранжевая кнопка «Hide Ads» левее кнопок «Login» и «Sign Up»
+            selectors: ['#header-menu [data-ga-impression-type="hide-ads"]']
           - title: "Подвал"
             selectors: ["footer"]
           - title: "Подвал с ТОПами по аниме, аниме-персонажам и т.д."
@@ -446,7 +574,9 @@ filters:
         description: "Веб-интерфейс"
         selectors:
           - title: "Общий чат"
-            description: "Круглая кнопка общего чата внизу справа (будто это кнопка Поддержки)"
+            description: >-
+              Круглая кнопка общего чата внизу справа
+              (будто это кнопка Поддержки)
             selectors: ["#chatter"]
           - title: "Подвал"
             selectors: ["footer"]
@@ -457,7 +587,8 @@ filters:
           - title: "Статистика"
             selectors: [":has(> .statistics-body)"]
           - title: "Постеры"
-            description: "Постеры со ссылками на Discord, Telegram, ВК, Boosty и Пикабу"
+            description: >-
+              Постеры со ссылками на Discord, Telegram, ВК, Boosty и Пикабу
             selectors: [".posters-side"]
   - title: "Wildberries"
     domains: ["wildberries.ru"]
@@ -467,13 +598,23 @@ filters:
         selectors:
           - title: "Чат с Поддержкой"
             description: "Фиолетовая круглая кнопка справа внизу"
-            selectors: ["#mainContainer [aria-label=\"Чат\"]"]
+            selectors: ['#mainContainer [aria-label="Чат"]']
       MainPage:
         description: "Заглавная страница"
         selectors:
           - title: "Баннеры"
-            description: "1) Длинный тонкий баннер на заглавной странице. На момент ноября 2025 отображает чёрный фон с летающими розово-фиолетовыми «процентами»; есть надписи «Разгар скидок» и «Чёрная пятница». 2) Карусель из больших баннеров. 3) Рандомные большие баннеры, которые появляются между плитками товаров"
-            selectors: [".main-page__banner-info:has(.swiper-container)", ".main-page__banner:has(.swiper-container)", ".main-page__banners"]
+            description: >-
+              1) Длинный тонкий баннер на заглавной странице.
+              На момент ноября 2025 отображает чёрный фон с летающими
+              розово-фиолетовыми «процентами»; есть надписи «Разгар скидок»
+              и «Чёрная пятница».
+              2) Карусель из больших баннеров.
+              3) Рандомные большие баннеры, которые появляются
+              между плитками товаров
+            selectors:
+              - ".main-page__banner-info:has(.swiper-container)"
+              - ".main-page__banner:has(.swiper-container)"
+              - ".main-page__banners"
       SearchResults:
         description: "Страница поисковой выдачи"
         selectors:
@@ -484,7 +625,10 @@ filters:
             description: "«Возможно, вам понравится:»"
             selectors: [".catalog-page__main .catalog-page__section"]
           - title: "Надписи на изображении товара"
-            description: "Надписи поверх изображения товара (карточки товара), например: «ХОРОШАЯ ЦЕНА», «ЧЁРНАЯ ПЯТНИЦА», «200 ₽ ЗА ОТЗЫВ», «−65%» (или любое другое число)"
+            description: >-
+              Надписи поверх изображения товара (карточки товара), например:
+              «ХОРОШАЯ ЦЕНА», «ЧЁРНАЯ ПЯТНИЦА», «200 ₽ ЗА ОТЗЫВ»,
+              «−65%» (или любое другое число)
             selectors: [".product-card .product-card__tips"]
   - title: "MyGreekDish"
     domains: ["mygreekdish.com"]
@@ -493,7 +637,9 @@ filters:
         description: "Веб-страница рецепта"
         selectors:
           - title: "Текст-вода"
-            description: "Рекламный текст, не относящийся ни к ингредиентам, ни к конкретной инструкции приготовления"
+            description: >-
+              Рекламный текст, не относящийся ни к ингредиентам,
+              ни к конкретной инструкции приготовления
             selectors:
               - ":has(~ * > .tasty-recipes-entry-content)"
               - ":has(~ .tasty-recipes-entry-content)"
@@ -508,7 +654,9 @@ filters:
           - title: "Подвал"
             selectors: [".footer"]
   - title: "MediaWiki"
-    description: "Википедия, Викисловарь, Викитека, Викиданные, Fandom и др. сайты на движке MediaWiki"
+    description: >-
+      Википедия, Викисловарь, Викитека, Викиданные, Fandom
+      и др. сайты на движке MediaWiki
     domains:
       - "mediawiki.org"
       - "wikipedia.org"
@@ -530,7 +678,8 @@ filters:
           - title: "Подвал"
             selectors: [".mw-footer"]
           - title: "Дисклеймер"
-            description: "Дисклеймер «Материал из Википедии — свободной энциклопедии»"
+            description: >-
+              Дисклеймер «Материал из Википедии — свободной энциклопедии»
             selectors: ["#content #siteSub"]
   - title: "GitHub (гитхаб)"
     domains: ["github.com"]
@@ -549,38 +698,55 @@ filters:
         description: "Сайдбар (панель слева)"
         selectors:
           - title: "Пункт «Copilot»"
-            selectors: ["ul[class*=\"ActionList-GroupList\"] :has(> a[href=\"/copilot\"])"]
+            selectors: ['ul[class*="ActionList-GroupList"] :has(> a[href="/copilot"])']
       SidebarRight:
         description: "Сайдбар (панель справа)"
         super_selector: ".repository-content .Layout-sidebar"
         selectors:
           - title: "«Readme»"
-            description: "Ссылка-дубль на README. Проблема в том, что README как бы на экране показывается, а значит дополнительная ссылка не нужна"
-            selectors: [":has(> [href^=\"#readme\"])"]
+            description: >-
+              Ссылка-дубль на README. Проблема в том, что README как бы
+              на экране показывается, а значит дополнительная ссылка не нужна
+            selectors: [':has(> [href^="#readme"])']
           - title: "Ссылка на релизы"
-            description: "Является дублем такой же ссылки, стоящей выше (h2-заголовок))"
-            selectors: [":has(> [href$=\"/releases\"]):not(h2)"]
+            description: >-
+              Является дублем такой же ссылки, стоящей выше (h2-заголовок))
+            selectors: [':has(> [href$="/releases"]):not(h2)']
           - title: "Скрытие блока с релизами если он пустой"
-            description: "Скрытие блока с релизами если ни одного релиза или тега нету (для чужих репозиториев)"
+            description: >-
+              Скрытие блока с релизами если ни одного релиза или тега нету
+              (для чужих репозиториев)
             # ВАЖНО, что если блок у чужого репозитория — то скрывать можно, а
             # если у своего — нежелательно, т.к. там есть ссылка на создание
             # релиза (а эта ссылка — единственная в веб-интерфейсе для создания
             # релиза).
-            selectors: [".BorderGrid-row:has(a[href$=\"/releases\"]):not(:has([href*=\"/releases/\"]))"]
+            selectors: ['.BorderGrid-row:has(a[href$="/releases"]):not(:has([href*="/releases/"]))']
           - title: "Скрытие блока с пакетами если он пустой"
-            description: "Скрытие блока с пакетами если ни одного пакета нету (для чужих репозиториев)"
+            description: >-
+              Скрытие блока с пакетами если ни одного пакета нету
+              (для чужих репозиториев)
             # ВАЖНО, что если блок у чужого репозитория — то скрывать можно, а
             # если у своего — нежелательно, т.к. там есть ссылка на создание
             # пакета (а эта ссылка — единственная в веб-интерфейсе для создания
             # пакета).
-            selectors: [".BorderGrid-row:has([href*=\"/packages\"]):not(:has(ul [href*=\"/packages\"])):not(:has(h2 + div > a))"]
+            selectors:
+              - >-
+                .BorderGrid-row:has([href*="/packages"]):not(:has(ul
+                [href*="/packages"])):not(:has(h2 + div > a))
       UserMenu:
         description: "Всплывашка, появляющаяся по нажатию на свою аватарку справа сверху"
         selectors:
           - title: "Пункт «Copilot settings»"
-            selectors: [":has(> [aria-label=\"User navigation\"]) :has(> * > [href*=\"tab=repositories\"]) :has(> [href=\"/settings/copilot\"])"]
+            selectors:
+              - >-
+                :has(> [aria-label="User navigation"]) :has(> * >
+                [href*="tab=repositories"]) :has(> [href="/settings/copilot"])
           - title: "Пункт «Try Enterprise»"
-            selectors: [":has(> [aria-label=\"User navigation\"]) :has(> * > [href*=\"tab=repositories\"]) :has(> [href*=\"/organizations/enterprise_plan\"])"]
+            selectors:
+              - >-
+                :has(> [aria-label="User navigation"]) :has(> * >
+                [href*="tab=repositories"]) :has(>
+                [href*="/organizations/enterprise_plan"])
   - title: "Авито (avito)"
     domains: ["avito.ru"]
     selector_groups:
@@ -591,26 +757,28 @@ filters:
           - title: "Подвал"
             selectors: ["[class*=\"module__footer\"]"]
           - title: "Баннер вверху"
-            description: "Баннер в самом верху. Надпись на нём: «Чёрная пятница до 30 ноября — ловите суперскидки и товары за 99 ₽»"
-            selectors: ["[class*=\"top-banner\"]"]
+            description: >-
+              Баннер в самом верху. Надпись на нём: «Чёрная пятница до
+              30 ноября — ловите суперскидки и товары за 99 ₽»
+            selectors: ['[class*="top-banner"]']
           - title: "Выпадающее меню «Для бизнеса»"
             description: "Выпадающее меню «Для бизнеса» сверху"
-            selectors: ["[data-marker=\"header/navbar\"] ul > li:has([href*=\"avito.ru/business\"])"]
+            selectors: ['[data-marker="header/navbar"] ul > li:has([href*="avito.ru/business"])']
           - title: "Ссылка «Карьера в Авито»"
             description: "Ссылка «Карьера в Авито» сверху"
-            selectors: ["[data-marker=\"header/navbar\"] ul > li:has([href*=\"career.avito.com\"])"]
+            selectors: ['[data-marker="header/navbar"] ul > li:has([href*="career.avito.com"])']
           - title: "Ссылка «Помощь»"
             description: "Ссылка «Помощь» сверху"
-            selectors: ["[data-marker=\"header/navbar\"] ul > li:has([href*=\"support.avito.ru\"])"]
+            selectors: ['[data-marker="header/navbar"] ul > li:has([href*="support.avito.ru"])']
           - title: "Ссылка «#яПомогаю»"
             description: "Ссылка «#яПомогаю» сверху"
-            selectors: ["[data-marker=\"header/navbar\"] ul > li:has([href^=\"/avito-care\"])"]
+            selectors: ['[data-marker="header/navbar"] ul > li:has([href^="/avito-care"])']
       Page:
         super_selector: "#app"
         description: "Веб-страница объявления"
         selectors:
           - title: "Реклама Авито Рекламы"
-            selectors: ["[class*=\"avito-ads-container\"]"]
+            selectors: ['[class*="avito-ads-container"]']
   - title: "SteamDB"
     domains: ["steamdb.info"]
     selector_groups:
@@ -620,10 +788,15 @@ filters:
           - title: "Подвал"
             selectors: [".footer"]
           - title: "«Support SteamDB»"
-            description: "Баннер с просьбой задонатить сайту. Надписи: «Ad-free Steam data for everyone since 2012», «Support SteamDB», «Donate or contribute»"
-            selectors: ["a[href=\"/donate/\"]"]
+            description: >-
+              Баннер с просьбой задонатить сайту. Надписи:
+              «Ad-free Steam data for everyone since 2012»,
+              «Support SteamDB», «Donate or contribute»
+            selectors: ['a[href="/donate/"]']
           - title: "Подвал навигационного меню"
-            description: "Подвал навигационного меню, раскрываемого по нажатию на кнопку «Menu» сверху слева"
+            description: >-
+              Подвал навигационного меню, раскрываемого по нажатию на кнопку
+              «Menu» сверху слева
             selectors:
               - ".header-menu .header-socials"
               - ".header-menu .header-disclaimer"
@@ -635,13 +808,22 @@ filters:
         description: "Заглавная страница"
         selectors:
           - title: "«Трансляция»"
-            description: "Значок «Трансляция» поверх тамбнейла некоторых игр на заглавной странице стима"
+            description: >-
+              Значок «Трансляция» поверх тамбнейла некоторых игр
+              на заглавной странице стима
             selectors: [".broadcast_live_stream_icon"]
           - title: "Предложение авторизоваться"
-            description: "Блок с надписями «Ищете рекомендации?», «Войдите, чтобы просмотреть личные рекомендации» и «Или присоединитесь к Steam бесплатно», а также кнопкой «Войти»"
+            description: >-
+              Блок с надписями «Ищете рекомендации?», «Войдите, чтобы
+              просмотреть личные рекомендации» и «Или присоединитесь к Steam
+              бесплатно», а также кнопкой «Войти»
             selectors: [".responsive_page_content #content_login"]
           - title: "Предложение авторизоваться"
-            description: "Блок с надписями «Вы не вошли в аккаунт!», «Откройте эту страницу в приложении Steam, чтобы купить продукт, добавить его в желаемое, подписаться на него и увидеть рекомендации» и большой белой кнопкой «Открыть в настольном приложении»"
+            description: >-
+              Блок с надписями «Вы не вошли в аккаунт!», «Откройте эту страницу
+              в приложении Steam, чтобы купить продукт, добавить его в желаемое,
+              подписаться на него и увидеть рекомендации»
+              и большой белой кнопкой «Открыть в настольном приложении»
             selectors: [".responsive_page_content .banner_open_in_steam"]
       WebUI:
         description: "Веб-интерфейс"
@@ -655,7 +837,10 @@ filters:
         description: "Веб-интерфейс"
         selectors:
           - title: "Баннер про машинный перевод"
-            description: "Баннер о том, что текст был переведён средствами машинного перевода. Текст: «Этот текст может быть частично переведен средствами машинного перевода или ИИ»"
+            description: >-
+              Баннер о том, что текст был переведён средствами
+              машинного перевода. Текст: «Этот текст может быть частично
+              переведен средствами машинного перевода или ИИ»
             selectors: ["#disclaimer-holder"]
           - title: "Подвал"
             selectors: [".layout-body-footer"]
@@ -663,8 +848,9 @@ filters:
         description: "Сайдбар (панель справа)"
         selectors:
           - title: "Фидбек (feedback) / обратная связь"
-            description: "Блок с вопросом: «Были ли сведения на этой странице полезными?»"
-            selectors: ["#layout-body-aside [data-test-id=\"site-user-feedback-right-rail\"]"]
+            description: >-
+              Блок с вопросом: «Были ли сведения на этой странице полезными?»
+            selectors: ['#layout-body-aside [data-test-id="site-user-feedback-right-rail"]']
   - title: "Mozilla"
     domains: ["mozilla.org"]
     selector_groups:
@@ -672,7 +858,8 @@ filters:
         description: "Веб-интерфейс"
         selectors:
           - title: "Подвал"
-            description: "Подвал сайта занимает приблизительно 90% всей высоты экрана"
+            description: >-
+              Подвал сайта занимает приблизительно 90% всей высоты экрана
             selectors: ["#outer-wrapper > footer"]
   - title: "MDN (Mozilla Developer Network) / Mozilla Web Docs"
     domains: ["developer.mozilla.org"]
@@ -683,17 +870,22 @@ filters:
           - title: "Подвал"
             selectors: [".page-layout__footer"]
           - title: "Рекламный баннер"
-            description: "Баннер с рекламой выше всей веб-страницы. Текст: «Learn front-end development with high quality, interactive courses from Scrimba»"
+            description: >-
+              Баннер с рекламой выше всей веб-страницы. Текст:
+              «Learn front-end development with high quality,
+              interactive courses from Scrimba»
             selectors: [".page-layout__banner"]
           - title: "Фидбек (feedback) / обратная связь"
-            description: "Блок с надписью «Help improve MDN» ниже основного содержания статьи"
-            selectors: [".article-footer[aria-labelledby=\"feedback\"]"]
+            description: >-
+              Блок с надписью «Help improve MDN»
+              ниже основного содержания статьи
+            selectors: ['.article-footer[aria-labelledby="feedback"]']
           - title: "Ссылка «Blog»"
             description: "Ссылка «Blog» в верхней навигацонной панели"
-            selectors: [".page-layout__header .navigation__menu .menu__tab[data-section=\"blog\"]"]
+            selectors: ['.page-layout__header .navigation__menu .menu__tab[data-section="blog"]']
           - title: "Ссылка «About»"
             description: "Всплывашка «About» в верхней навигацонной панели"
-            selectors: [".page-layout__header .navigation__menu .menu__tab[data-section=\"about\"]"]
+            selectors: ['.page-layout__header .navigation__menu .menu__tab[data-section="about"]']
   - title: "W3C (Консорциум Всемирной паутины)"
     domains: ["w3.org", "www.w3.org"]
     selector_groups:
@@ -703,8 +895,10 @@ filters:
           - title: "Подвал"
             selectors: [".global-footer"]
           - title: "Баннер о смене логотипа"
-            description: "Баннер о смене логотипа. Располагается выше всего на веб-странице. Текст: «We have a new logo! Learn more»"
-            selectors: [".global-header .banner:has([href=\"https://www.w3.org/press-releases/2025/new-logo/\"])"]
+            description: >-
+              Баннер о смене логотипа. Располагается выше всего на веб-странице.
+              Текст: «We have a new logo! Learn more»
+            selectors: ['.global-header .banner:has([href="https://www.w3.org/press-releases/2025/new-logo/"])']
   - title: "Python documentation"
     domains: ["docc.python.org"]
     selector_groups:
@@ -714,7 +908,10 @@ filters:
           - title: "Подвал"
             selectors: [".footer"]
           - title: "Блок с выбором языка, версии Python и т.д."
-            description: "Блок с выбором языка, версии Python и темы, а также с поиском и ссылками. Проблема в том, что сверху полностью такая же панель уже есть"
+            description: >-
+              Блок с выбором языка, версии Python и темы, а также с поиском
+              и ссылками. Проблема в том, что сверху полностью такая же панель
+              уже есть
             selectors: [".related + .document + .related"]
   - title: "AliExpress (иностранный)"
     domains: ["aliexpress.com"]
@@ -725,14 +922,18 @@ filters:
           - title: "Подвал"
             selectors: [".footer-wrap"]
           - title: "Большая квадратная всплывашка"
-            description: "Большая квадратная всплывашка посередине экрана, которая затемняет весь экран"
+            description: >-
+              Большая квадратная всплывашка посередине экрана,
+              которая затемняет весь экран
             # (Найдено здесь: https://nl.aliexpress.com/)
             selectors: [".faas-home-page :has(> .image-poplayer-modal)"]
           - title: "Маленькая квадратная всплывашка"
-            description: "Маленькая квадратная всплывашка в левом краю в нижней половине экрана"
+            description: >-
+              Маленькая квадратная всплывашка в левом краю
+              в нижней половине экрана
             # (Найдено здесь: https://nl.aliexpress.com/)
             selectors: [".faas-home-page :has(> .drogue-poplayer-modal)"]
-  - title: "AliExpress (русский)"  # У Алиэкспрессов СИЛЬНО различающиеся веб-сайты
+  - title: "AliExpress (русский)" # У Алиэкспрессов СИЛЬНО различающиеся веб-сайты
     domains: ["aliexpress.ru"]
     selector_groups:
       WebUI:
@@ -740,9 +941,9 @@ filters:
         super_selector: "#__aer_root__"
         selectors:
           - title: "Подвал"
-            selectors: ["[class*=\"RedFooter_RedFooter__root__\"]"]
+            selectors: ['[class*="RedFooter_RedFooter__root__"]']
           - title: "Куки"
-            selectors: ["[class*=\"RecommendationFeedTabs\"] + [class*=\"SnowPrivacyPolicyBanner\"]"]
+            selectors: ['[class*="RecommendationFeedTabs"] + [class*="SnowPrivacyPolicyBanner"]']
   - title: "ChatGPT"
     domains: ["chatgpt.com"]
     selector_groups:
@@ -750,22 +951,37 @@ filters:
         description: "Веб-интерфейс"
         selectors:
           - title: "Реклама сверху поседерине"
-            description: "Кнопка-всплывашка «Перейти на Plus» (ИЛИ «Бесплатное предложение») вверху посередине. Цвет: фиолетовый"
+            description: >-
+              Кнопка-всплывашка «Перейти на Plus» (ИЛИ «Бесплатное предложение»)
+              вверху посередине. Цвет: фиолетовый
             selectors:
-              - "#page-header > :has(button > svg > path[d=\"M17.665 10C17.665 10.6877 17.1785 11.2454 16.5488 11.3945L16.4219 11.4189C14.7098 11.6665 13.6129 12.1305 12.877 12.8623C12.1414 13.5938 11.6742 14.6843 11.4238 16.3887C11.3197 17.0973 10.7182 17.665 9.96484 17.665C9.27085 17.665 8.68836 17.1772 8.53613 16.5215C8.12392 14.7459 7.6623 13.619 6.95703 12.8652C6.31314 12.1772 5.39414 11.7268 3.88672 11.4688L3.57715 11.4199C2.88869 11.319 2.33496 10.734 2.33496 10C2.33496 9.26603 2.88869 8.681 3.57715 8.58008L3.88672 8.53125C5.39414 8.27321 6.31314 7.82277 6.95703 7.13477C7.6623 6.38104 8.12392 5.25413 8.53613 3.47852L8.56934 3.35742C8.76133 2.76356 9.31424 2.33496 9.96484 2.33496C10.7182 2.33497 11.3197 2.9027 11.4238 3.61133L11.5283 4.22266C11.7954 5.58295 12.2334 6.49773 12.877 7.1377C13.6129 7.86952 14.7098 8.33351 16.4219 8.58105C17.1119 8.68101 17.665 9.26667 17.665 10Z\"]):not(:has(> button))"
-              - "#page-header > :has(button > svg > path[d=\"M16.002 10.665H10.665V16.835H14.167C15.1803 16.8348 16.002 16.0133 16.002 15V10.665ZM3.99805 15C3.99805 16.0133 4.81972 16.8348 5.83301 16.835H9.33496V10.665H3.99805V15ZM16.835 8.33301C16.8348 7.77995 16.3861 7.33203 15.833 7.33203H10.665V9.33496H16.667C16.7597 9.33478 16.8348 9.2597 16.835 9.16699V8.33301ZM3.16504 9.16699C3.16521 9.2597 3.2403 9.33479 3.33301 9.33496H9.33496V7.33203H4.16699C3.61389 7.33203 3.16521 7.77995 3.16504 8.33301V9.16699ZM9.33496 4.58301C9.33479 3.79994 8.70006 3.16521 7.91699 3.16504C7.13378 3.16504 6.49822 3.79983 6.49805 4.58301C6.49805 5.36633 7.13367 6.00195 7.91699 6.00195H9.33496V4.58301ZM10.665 6.00195H12.083C12.8663 6.00195 13.502 5.36633 13.502 4.58301C13.5018 3.79983 12.8662 3.16504 12.083 3.16504C11.2999 3.16521 10.6652 3.79994 10.665 4.58301V6.00195ZM14.832 4.58301C14.832 5.10264 14.6852 5.58752 14.4346 6.00195H15.833C17.1206 6.00195 18.1649 7.04541 18.165 8.33301V9.16699C18.1649 9.75495 17.825 10.2616 17.332 10.5068V15C17.332 16.7479 15.9148 18.1649 14.167 18.165H5.83301C4.08518 18.1649 2.66797 16.7479 2.66797 15V10.5068C2.17498 10.2616 1.83509 9.75495 1.83496 9.16699V8.33301C1.83514 7.04541 2.87936 6.00195 4.16699 6.00195H5.56543C5.31485 5.58752 5.16797 5.10264 5.16797 4.58301C5.16814 3.06529 6.39924 1.83496 7.91699 1.83496C8.75066 1.83506 9.49604 2.20774 10 2.79395C10.504 2.20774 11.2493 1.83506 12.083 1.83496C13.6008 1.83496 14.8319 3.0653 14.832 4.58301Z\"]):not(:has(> button))"
+              - '#page-header > :has(button > svg > path[d="M17.665 10C17.665 10.6877 17.1785 11.2454 16.5488 11.3945L16.4219 11.4189C14.7098 11.6665 13.6129 12.1305 12.877 12.8623C12.1414 13.5938 11.6742 14.6843 11.4238 16.3887C11.3197 17.0973 10.7182 17.665 9.96484 17.665C9.27085 17.665 8.68836 17.1772 8.53613 16.5215C8.12392 14.7459 7.6623 13.619 6.95703 12.8652C6.31314 12.1772 5.39414 11.7268 3.88672 11.4688L3.57715 11.4199C2.88869 11.319 2.33496 10.734 2.33496 10C2.33496 9.26603 2.88869 8.681 3.57715 8.58008L3.88672 8.53125C5.39414 8.27321 6.31314 7.82277 6.95703 7.13477C7.6623 6.38104 8.12392 5.25413 8.53613 3.47852L8.56934 3.35742C8.76133 2.76356 9.31424 2.33496 9.96484 2.33496C10.7182 2.33497 11.3197 2.9027 11.4238 3.61133L11.5283 4.22266C11.7954 5.58295 12.2334 6.49773 12.877 7.1377C13.6129 7.86952 14.7098 8.33351 16.4219 8.58105C17.1119 8.68101 17.665 9.26667 17.665 10Z"]):not(:has(> button))'
+              - '#page-header > :has(button > svg > path[d="M16.002 10.665H10.665V16.835H14.167C15.1803 16.8348 16.002 16.0133 16.002 15V10.665ZM3.99805 15C3.99805 16.0133 4.81972 16.8348 5.83301 16.835H9.33496V10.665H3.99805V15ZM16.835 8.33301C16.8348 7.77995 16.3861 7.33203 15.833 7.33203H10.665V9.33496H16.667C16.7597 9.33478 16.8348 9.2597 16.835 9.16699V8.33301ZM3.16504 9.16699C3.16521 9.2597 3.2403 9.33479 3.33301 9.33496H9.33496V7.33203H4.16699C3.61389 7.33203 3.16521 7.77995 3.16504 8.33301V9.16699ZM9.33496 4.58301C9.33479 3.79994 8.70006 3.16521 7.91699 3.16504C7.13378 3.16504 6.49822 3.79983 6.49805 4.58301C6.49805 5.36633 7.13367 6.00195 7.91699 6.00195H9.33496V4.58301ZM10.665 6.00195H12.083C12.8663 6.00195 13.502 5.36633 13.502 4.58301C13.5018 3.79983 12.8662 3.16504 12.083 3.16504C11.2999 3.16521 10.6652 3.79994 10.665 4.58301V6.00195ZM14.832 4.58301C14.832 5.10264 14.6852 5.58752 14.4346 6.00195H15.833C17.1206 6.00195 18.1649 7.04541 18.165 8.33301V9.16699C18.1649 9.75495 17.825 10.2616 17.332 10.5068V15C17.332 16.7479 15.9148 18.1649 14.167 18.165H5.83301C4.08518 18.1649 2.66797 16.7479 2.66797 15V10.5068C2.17498 10.2616 1.83509 9.75495 1.83496 9.16699V8.33301C1.83514 7.04541 2.87936 6.00195 4.16699 6.00195H5.56543C5.31485 5.58752 5.16797 5.10264 5.16797 4.58301C5.16814 3.06529 6.39924 1.83496 7.91699 1.83496C8.75066 1.83506 9.49604 2.20774 10 2.79395C10.504 2.20774 11.2493 1.83506 12.083 1.83496C13.6008 1.83496 14.8319 3.0653 14.832 4.58301Z"]):not(:has(> button))'
           - title: "Всплывашка «Недостаточно места»"
-            description: "Всплывашка, появляющаяся над формой ввода текста. Имеет следующие надписи: «В ChatGPT недостаточно места для сохраненной памяти» и «Новая память не будет добавляться, пока вы не освободите место. Узнать больше», а также имеет чёрную кнопку «Управление»"
-            selectors: ["#thread-bottom button[name=\"context-connector-pasted-link-popover-trigger\"] ~ :has([href*=\"//help.openai.com/\"][href*=\"memory\"])"]
+            description: >-
+              Всплывашка, появляющаяся над формой ввода текста.
+              Имеет следующие надписи: «В ChatGPT недостаточно места для
+              сохраненной памяти» и «Новая память не будет добавляться,
+              пока вы не освободите место. Узнать больше»,
+              а также имеет чёрную кнопку «Управление»
+            selectors:
+              - >-
+                #thread-bottom button[name="context-connector-pasted-link-popover-trigger"] ~
+                :has([href*="//help.openai.com/"][href*="memory"])
           - title: "Куки"
-            description: "Предупреждение ниже формы ввода текста. Имеет следующий текст: «ChatGPT может допускать ошибки. Проверьте важную информацию. См. настройки cookie-файлов»"
+            description: >-
+              Предупреждение ниже формы ввода текста. Имеет следующий текст:
+              «ChatGPT может допускать ошибки. Проверьте важную информацию.
+              См. настройки cookie-файлов»
             selectors: ["#thread-bottom-container > :not(#thread-bottom)"]
           - title: "Всплывашка на весь экран"
             # К сожалению, она больше не появлялась, поэтому не смог её описать.
-            selectors: ["body > [data-testid=\"modal-free-trial-upsell\"]"]
+            selectors: ['body > [data-testid="modal-free-trial-upsell"]']
           - title: "Всплывашка «Попробуйте Plus бесплатно»"
-            description: "Всплывашка «Попробуйте Plus бесплатно» выше поля ввода текста (и прикреплено к нему)"
-            selectors: [":has(+ form #prompt-textarea):has(button[data-testid=\"close-button\"])"]
+            description: >-
+              Всплывашка «Попробуйте Plus бесплатно» выше поля ввода текста
+              (и прикреплено к нему)
+            selectors: [':has(+ form #prompt-textarea):has(button[data-testid="close-button"])']
   - title: "Habr (Хабр, Хабрахабр)"
     domains: ["habr.com"]
     selector_groups:
@@ -775,13 +991,17 @@ filters:
         selectors:
           - title: "Реклама выше шапки сайта"
             description: "Большой длинный блок с рекламой выше шапки"
-            selectors: [".header-banner-wrapper:has([id^=\"adfox\"])"]
+            selectors: ['.header-banner-wrapper:has([id^="adfox"])']
           - title: "Надпись посередине шапки"
-            description: "Надпись-ссылка посередине шапки, слыкающая на тот или иной пост от команды Хабр. Надпись иногда меняется"
+            description: >-
+              Надпись-ссылка посередине шапки, ссылающая на тот или иной пост
+              от команды Хабр. Надпись иногда меняется
             # (Сейчас там надпись «Они летят в космос»)
             selectors: [".tm-header__container .header-feature"]
           - title: "Реклама-всплывашка внизу экрана"
-            description: "Длинный всплывающий блок рекламы, прикреплённый к экрану снизу. Жёлто-оранжевого цвета"
+            description: >-
+              Длинный всплывающий блок рекламы, прикреплённый к экрану снизу.
+              Жёлто-оранжевого цвета
             selectors: [".fixed-banner-wrapper:has(.advertising-info)"]
           - title: "Подвал"
             selectors:
@@ -796,23 +1016,32 @@ filters:
               - ".tm-layout-sidebar__ads"
               - ".tm-layout-sidebar__banner_bottom"
           - title: "Виджеты компании"
-            description: "Виджеты компании автора статьи. Компании используют виджеты для рекламирования своих услуг. У одной компании было аж 7 виджетов"
+            description: >-
+              Виджеты компании автора статьи. Компании используют виджеты для
+              рекламирования своих услуг. У одной компании было аж 7 виджетов
             # Пример: https://habr.com/ru/companies/kts/articles/971982/
-            selectors: [".tm-company-widgets section[type=\"banner\"]"]
+            selectors: ['.tm-company-widgets section[type="banner"]']
       ArticlePage:
         description: "Веб-страница статьи/поста/новости"
         super_selector: "#app .tm-page"
         selectors:
           - title: "Реклама выше блока с комментариями"
-            description: "Если попытаться проскроллить вниз, чтобы рекламы не было видно, то всплывает другая, будучи прикреплённой к верхней стороне экрана. Это как бы две рекламы, но одна появляется за другой"
+            description: >-
+              Если попытаться проскроллить вниз, чтобы рекламы не было видно,
+              то всплывает другая, будучи прикреплённой к верхней стороне экрана.
+              Это как бы две рекламы, но одна появляется за другой
             selectors:
               - ".tm-page__wrapper .sponsor-block"
               - ".tm-page__wrapper .tm-article-blocks .sponsor-block"
           - title: "Реклама от компании автора статьи"
-            description: "Большой блок-баннер с рекламой от компании, в которой автор статьи работает (например, ВК или Selectel)"
+            description: >-
+              Большой блок-баннер с рекламой от компании, в которой автор статьи
+              работает (например, ВК или Selectel)
             selectors: [".tm-page__header"]
           - title: "Кнопка «Объяснить код»"
-            description: "Кнопка «Объяснить код» внизу каждого блока с кодом в тексте статьи/поста/новости"
+            description: >-
+              Кнопка «Объяснить код» внизу каждого блока
+              с кодом в тексте статьи/поста/новости
             selectors: ["#post-content-body .code-explainer"]
   - title: "Internet Archive"
     domains: ["archive.org"]
@@ -821,13 +1050,21 @@ filters:
         description: "Веб-интерфейс"
         selectors:
           - title: "Баннер о донате"
-            description: "Большой баннер жёлтого цвета выше шапки сайта, просящий задонатить сайту. Одна из надписей: «Please Don't Scroll Past This»"
+            description: >-
+              Большой баннер жёлтого цвета выше шапки сайта, просящий
+              задонатить сайту. Одна из надписей:
+              «Please Don't Scroll Past This»
             selectors: ["#donate_banner"]
           - title: "Навигация в шапке"
-            description: "Полоса с навигационными ссылками в шапке. Ссылки будто бы взяты из подвала. Надписи: «ABOUT», «BLOG», «EVENTS», «PROJECTS», «HELP», «DONATE» (с красным SVG-сердечком), «CONTACT», «JOBS», «VOLUNTEER»"
+            description: >-
+              Полоса с навигационными ссылками в шапке. Ссылки будто бы взяты из
+              подвала. Надписи: «ABOUT», «BLOG», «EVENTS», «PROJECTS», «HELP»,
+              «DONATE» (с красным SVG-сердечком), «CONTACT», «JOBS», «VOLUNTEER»
             selectors: ["#topnav desktop-subnav"]
           - title: "Подвал"
-            description: "Подвал сайта. Состоит из надписи «Terms of Service (last updated 12/31/2014)»"
+            description: >-
+              Подвал сайта. Состоит из надписи «Terms of Service
+              (last updated 12/31/2014)»
             selectors: ["#maincontent .terms-of-service"]
   - title: "Лабиринт (книжный интернет-магазин)"
     domains: ["labirint.ru"]

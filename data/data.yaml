@@ -17,7 +17,15 @@ filters:
             selectors: ["footer", "#sfooter"]
           - title: "Реклама"
             description: "Реклама в поисковой выдаче. Надписи: «Реклама», «Скрыть рекламу»"
-            selectors: [":has(> #bottomads)"]
+            # Прошлые неудачные селекторы:
+            # ```
+            # :has(> #bottomads)
+            # # Этот селектор работает при обычном поиске, но на странице
+            # # поиска картинок скрывает все картинки.
+            # ```
+            selectors:
+              - "#main #rso #tads" # Реклама сверху поисковой выдачи
+              - "#main #bottomads" # Реклама снизу поисковой выдачи
           #- title: "Приложения Google и кнопка «Войти»"
           #  #description:
           #  tags: ["junk"]
@@ -53,6 +61,7 @@ filters:
             selectors: ["#main #botstuff > * > :has([href$=\"/policies/faq\"])"]
           - title: "Голосовой поиск"
             description: "Убирает кнопку голосового поиска, расположенную в поисковой строке между кнопками экранной клавиатуры и непосредственно поиска"
+            # Данный селектор работает как на странице поиска, так и на заглавной странице Google
             selectors: ["form[action=\"/search\"] :has(> textarea) + * [aria-label=\"Голосовой поиск\"]"]
       TopNav:
         description: "Верхняя навигационная панель"
@@ -92,9 +101,21 @@ filters:
           - title: "«Ещё темы»"
             description: "Карусель с видео, предложенными YouTube'ом"
             selectors: ["ytd-rich-section-renderer"]
+      VideosSearchPage:
+        description: "Веб-страница поиска видео"
+        selectors:
+          - title: "Реклама"
+            description: "Реклама через каждые N элементов поисковой выдачи. Блоки рекламы оформлены как блоки видео (с тамбнейлом, заголовком, описанием)"
+            selectors: ["ytd-app #contents > ytd-ad-slot-renderer"]
       Sidebar:
         description: "Сайдбар (панель слева)"
         selectors:
+          - title: "Кнопка «Справка»"
+            description: "Кнопка «Справка» ниже кнопки «Жалобы» и выше кнопки «Отправить отзыв»"
+            selectors: ["ytd-guide-renderer #sections > * ytd-guide-entry-renderer:has([title=\"Справка\"])"]
+          - title: "Кнопка «Отправить отзыв»"
+            description: "Кнопка «Отправить отзыв» ниже кнопки «Справка» и выше нижнего колонтитула"
+            selectors: ["ytd-guide-renderer #sections > * ytd-guide-entry-renderer:has([title=\"Отправить отзыв\"])"]
           - title: "Нижний колонтитул"
             description: "Нижний колонтитул сайдбара с «О сервисе», «Прессе», «Авторские права», «Связаться с нами», ..., «Условия использования», «Конфиденциальность» и т.д."
             selectors: ["ytd-guide-renderer #footer"]
@@ -191,18 +212,41 @@ filters:
           - title: "Кнопка «Advertise on Reddit»"
             description: "Кнопка «Advertise on Reddit» вверху справа"
             selectors: ["[data-part=\"advertise\"]"]
-      Sidebar:
+      SidebarLeft:
         description: "Сайдбар (панель слева)"
         selectors:
           - title: "«GAMES ON REDDIT»"
             description: "Кнопка «Advertise on Reddit» вверху справа"
-            selectors: ["*:has(> games-section-badge-controller)", "*:has(> games-section-badge-controller) + hr"]
+            selectors:
+              - "#left-sidebar-container :has(> games-section-badge-controller)"
+              - "#left-sidebar-container :has(> games-section-badge-controller) + hr"
+          - title: "«RESOURCES»"
+            description: "Блок «RESOURCES». Ссылки в блоке: «About Reddit», «Advertise», «Developer Platform», «Reddit Pro» («BETA»), «Help», «Blog», «Careers», «Press», «Communities», «Best of Reddit», «Reddit Rules», «Privacy Policy», «User Agreement», «Accessibility»"
+            selectors: ["#left-sidebar-container :has(> faceplate-expandable-section-helper #RESOURCES)"]
+          - title: "«All rights reserved»"
+            description: "Надпись «Reddit, Inc. © 2025. All rights reserved.»"
+            selectors: ["#left-sidebar-container :has(> [href=\"https://redditinc.com\"])"]
+      SidebarRight:
+        description: "Сайдбар (панель справа)"
+        selectors:
+          - title: "Ссылки внизу сайдбара"
+            description: "Ссылки «Reddit Rules», «Privacy Policy», «User Agreement», «Accessibility» и ссылка (ссылка!) «Reddit, Inc. © 2025. All rights reserved.» внизу сайдбара"
+            selectors: ["#right-sidebar-container .legal-links"]
+          - title: "Реклама ВЫШЕ и НИЖЕ сайдбара"
+            description: "Квадратные iframe-ы с рекламой выше и ниже сайдбара (панели справа). Надпись: «PROMOTED»"
+            selectors: ["#right-sidebar-container [bundlename=\"sidebar_ad\"]"]
       Post:
         description: "Страница поста"
         selectors:
           - title: "Реклама под постом"
             tags: ["ad"]
             selectors: ["shreddit-comments-page-ad"]
+      Other:
+        description: "Остальное"
+        selectors:
+          - title: "Предложения сыграть в игру"
+            description: "Игры оформлена и выглядит как обычные пост в Reddit"
+            selectors: ["#main-content article:has(> shreddit-post[game])"]
   - title: "Stack Overflow и Stack Exchange"
     domains:
       - "stackoverflow.com"
@@ -269,6 +313,9 @@ filters:
           - title: "Ссылка «Products»"
             description: "Ссылка «Products» левее от логотипа Stack Overflow и правее от поисковой строки"
             selectors: [":has(> #search) li:has([data-text=\"Products\"])"]
+          - title: "Баннер об AI Assist"
+            description: "Длинный тонкий баннер, объявляющий о запуске фичи AI Assist на STack Overflow. Надпись: «AI Assist is now on Stack Overflow. Start a chat to get instant answers from across the network. Sign up to save and share your chats.». Впервые встречено на superuser.com будучи неавторизованным"
+            selectors: ["body > #announcement-banner:has([href*=\"//stackoverflow.com/ai-assist\"])"]
       QuestionPage:
         description: "Веб-страница вопроса"
         selectors:
@@ -596,6 +643,15 @@ filters:
           - title: "Фидбек (feedback) / обратная связь"
             description: "Блок с вопросом: «Были ли сведения на этой странице полезными?»"
             selectors: ["#layout-body-aside [data-test-id=\"site-user-feedback-right-rail\"]"]
+  - title: "Mozilla"
+    domains: ["mozilla.org"]
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Подвал"
+            description: "Подвал сайта занимает приблизительно 90% всей высоты экрана"
+            selectors: ["#outer-wrapper > footer"]
   - title: "MDN (Mozilla Developer Network) / Mozilla Web Docs"
     domains: ["developer.mozilla.org"]
     selector_groups:
@@ -664,3 +720,97 @@ filters:
             selectors: ["#__aer_root__ [class*=\"RedFooter_RedFooter__root__\"]"]
           - title: "Куки"
             selectors: ["#__aer_root__ [class*=\"RecommendationFeedTabs\"] + [class*=\"SnowPrivacyPolicyBanner\"]"]
+  - title: "ChatGPT"
+    domains: ["chatgpt.com"]
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Реклама сверху поседерине"
+            description: "Кнопка-всплывашка «Перейти на Plus» (ИЛИ «Бесплатное предложение») вверху посередине. Цвет: фиолетовый"
+            selectors:
+              - "#page-header > :has(button > svg > path[d=\"M17.665 10C17.665 10.6877 17.1785 11.2454 16.5488 11.3945L16.4219 11.4189C14.7098 11.6665 13.6129 12.1305 12.877 12.8623C12.1414 13.5938 11.6742 14.6843 11.4238 16.3887C11.3197 17.0973 10.7182 17.665 9.96484 17.665C9.27085 17.665 8.68836 17.1772 8.53613 16.5215C8.12392 14.7459 7.6623 13.619 6.95703 12.8652C6.31314 12.1772 5.39414 11.7268 3.88672 11.4688L3.57715 11.4199C2.88869 11.319 2.33496 10.734 2.33496 10C2.33496 9.26603 2.88869 8.681 3.57715 8.58008L3.88672 8.53125C5.39414 8.27321 6.31314 7.82277 6.95703 7.13477C7.6623 6.38104 8.12392 5.25413 8.53613 3.47852L8.56934 3.35742C8.76133 2.76356 9.31424 2.33496 9.96484 2.33496C10.7182 2.33497 11.3197 2.9027 11.4238 3.61133L11.5283 4.22266C11.7954 5.58295 12.2334 6.49773 12.877 7.1377C13.6129 7.86952 14.7098 8.33351 16.4219 8.58105C17.1119 8.68101 17.665 9.26667 17.665 10Z\"]):not(:has(> button))"
+              - "#page-header > :has(button > svg > path[d=\"M16.002 10.665H10.665V16.835H14.167C15.1803 16.8348 16.002 16.0133 16.002 15V10.665ZM3.99805 15C3.99805 16.0133 4.81972 16.8348 5.83301 16.835H9.33496V10.665H3.99805V15ZM16.835 8.33301C16.8348 7.77995 16.3861 7.33203 15.833 7.33203H10.665V9.33496H16.667C16.7597 9.33478 16.8348 9.2597 16.835 9.16699V8.33301ZM3.16504 9.16699C3.16521 9.2597 3.2403 9.33479 3.33301 9.33496H9.33496V7.33203H4.16699C3.61389 7.33203 3.16521 7.77995 3.16504 8.33301V9.16699ZM9.33496 4.58301C9.33479 3.79994 8.70006 3.16521 7.91699 3.16504C7.13378 3.16504 6.49822 3.79983 6.49805 4.58301C6.49805 5.36633 7.13367 6.00195 7.91699 6.00195H9.33496V4.58301ZM10.665 6.00195H12.083C12.8663 6.00195 13.502 5.36633 13.502 4.58301C13.5018 3.79983 12.8662 3.16504 12.083 3.16504C11.2999 3.16521 10.6652 3.79994 10.665 4.58301V6.00195ZM14.832 4.58301C14.832 5.10264 14.6852 5.58752 14.4346 6.00195H15.833C17.1206 6.00195 18.1649 7.04541 18.165 8.33301V9.16699C18.1649 9.75495 17.825 10.2616 17.332 10.5068V15C17.332 16.7479 15.9148 18.1649 14.167 18.165H5.83301C4.08518 18.1649 2.66797 16.7479 2.66797 15V10.5068C2.17498 10.2616 1.83509 9.75495 1.83496 9.16699V8.33301C1.83514 7.04541 2.87936 6.00195 4.16699 6.00195H5.56543C5.31485 5.58752 5.16797 5.10264 5.16797 4.58301C5.16814 3.06529 6.39924 1.83496 7.91699 1.83496C8.75066 1.83506 9.49604 2.20774 10 2.79395C10.504 2.20774 11.2493 1.83506 12.083 1.83496C13.6008 1.83496 14.8319 3.0653 14.832 4.58301Z\"]):not(:has(> button))"
+          - title: "Всплывашка «Недостаточно места»"
+            description: "Всплывашка, появляющаяся над формой ввода текста. Имеет следующие надписи: «В ChatGPT недостаточно места для сохраненной памяти» и «Новая память не будет добавляться, пока вы не освободите место. Узнать больше», а также имеет чёрную кнопку «Управление»"
+            selectors: ["#thread-bottom button[name=\"context-connector-pasted-link-popover-trigger\"] ~ :has([href*=\"//help.openai.com/\"][href*=\"memory\"])"]
+          - title: "Куки"
+            description: "Предупреждение ниже формы ввода текста. Имеет следующий текст: «ChatGPT может допускать ошибки. Проверьте важную информацию. См. настройки cookie-файлов»"
+            selectors: ["#thread-bottom-container > :not(#thread-bottom)"]
+          - title: "Всплывашка на весь экран"
+            # К сожалению, она больше не появлялась, поэтому не смог её описать.
+            selectors: ["body > [data-testid=\"modal-free-trial-upsell\"]"]
+          - title: "Всплывашка «Попробуйте Plus бесплатно»"
+            description: "Всплывашка «Попробуйте Plus бесплатно» выше поля ввода текста (и прикреплено к нему)"
+            selectors: [":has(+ form #prompt-textarea):has(button[data-testid=\"close-button\"])"]
+  - title: "Habr (Хабр, Хабрахабр)"
+    domains: ["habr.com"]
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Реклама выше шапки сайта"
+            description: "Большой длинный блок с рекламой выше шапки"
+            selectors: ["#app .header-banner-wrapper:has([id^=\"adfox\"])"]
+          - title: "Надпись посередине шапки"
+            description: "Надпись-ссылка посередине шапки, слыкающая на тот или иной пост от команды Хабр. Надпись иногда меняется"
+            # (Сейчас там надпись «Они летят в космос»)
+            selectors: ["#app .tm-header__container .header-feature"]
+          - title: "Реклама-всплывашка внизу экрана"
+            description: "Длинный всплывающий блок рекламы, прикреплённый к экрану снизу. Жёлто-оранжевого цвета"
+            selectors: ["#app .fixed-banner-wrapper:has(.advertising-info)"]
+          - title: "Подвал"
+            selectors:
+              - ".tm-layout__wrapper .tm-footer-menu"
+              - ".tm-layout__wrapper .tm-footer"
+      SidebarRight:
+        description: "Сайдбар (панель справа)"
+        selectors:
+          - title: "Реклама выше и ниже блока «Читают сейчас»"
+            selectors:
+              - "#app .tm-page__sidebar .tm-layout-sidebar__ads"
+              - "#app .tm-page__sidebar .tm-layout-sidebar__banner_bottom"
+          - title: "Виджеты компании"
+            description: "Виджеты компании автора статьи. Компании используют виджеты для рекламирования своих услуг. У одной компании было аж 7 виджетов"
+            # Пример: https://habr.com/ru/companies/kts/articles/971982/
+            selectors: ["#app .tm-page__sidebar .tm-company-widgets section[type=\"banner\"]"]
+      ArticlePage:
+        description: "Веб-страница статьи/поста/новости"
+        selectors:
+          - title: "Реклама выше блока с комментариями"
+            description: "Если попытаться проскроллить вниз, чтобы рекламы не было видно, то всплывает другая, будучи прикреплённой к верхней стороне экрана. Это как бы две рекламы, но одна появляется за другой"
+            selectors:
+              - "#app .tm-page__wrapper .sponsor-block"
+              - "#app .tm-page__wrapper .tm-article-blocks .sponsor-block"
+          - title: "Реклама от компании автора статьи"
+            description: "Большой блок-баннер с рекламой от компании, в которой автор статьи работает (например, ВК или Selectel)"
+            selectors: ["#app .tm-page .tm-page__header"]
+          - title: "Кнопка «Объяснить код»"
+            description: "Кнопка «Объяснить код» внизу каждого блока с кодом в тексте статьи/поста/новости"
+            selectors: ["#post-content-body .code-explainer"]
+  - title: "Internet Archive"
+    domains: ["archive.org"]
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Баннер о донате"
+            description: "Большой баннер жёлтого цвета выше шапки сайта, просящий задонатить сайту. Одна из надписей: «Please Don't Scroll Past This»"
+            selectors: ["#donate_banner"]
+          - title: "Навигация в шапке"
+            description: "Полоса с навигационными ссылками в шапке. Ссылки будто бы взяты из подвала. Надписи: «ABOUT», «BLOG», «EVENTS», «PROJECTS», «HELP», «DONATE» (с красным SVG-сердечком), «CONTACT», «JOBS», «VOLUNTEER»"
+            selectors: ["#topnav desktop-subnav"]
+          - title: "Подвал"
+            description: "Подвал сайта. Состоит из надписи «Terms of Service (last updated 12/31/2014)»"
+            selectors: ["#maincontent .terms-of-service"]
+  - title: "Лабиринт (книжный интернет-магазин)"
+    domains: ["labirint.ru"]
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Подвал"
+            selectors: ["#__nuxt > footer"]
+          - title: "Куки"
+            description: "Баннер о куки"
+            selectors: [".cookie-policy"]

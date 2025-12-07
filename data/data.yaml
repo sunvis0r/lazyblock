@@ -219,6 +219,9 @@ filters:
           - title: "«Цена что надо» поверх тамбнейла продукта"
             tags: ["junk"]
             selectors: ['section:has([title="Цена что надо"])']
+          - title: "«Распродажа» поверх тамбнейла продукта"
+            tags: ["junk"]
+            selectors: ['section:has([title="Распродажа"])']
           - title: "Значок Ozon и надпись «Ozon» рядом с количеством отзывов"
             description: "Сам Ozon никак не описывает для чего они"
             tags: ["junk"]

@@ -1080,3 +1080,66 @@ filters:
           - title: "Куки"
             description: "Баннер о куки"
             selectors: [".cookie-policy"]
+  - title: "BiliBili"
+    domains: ["bilibili.tv"]
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "«Вход через аккаунт Google»"
+            description: "Попап «Вход через аккаунт Google» справа сверху"
+            selectors: ['body > #credential_picker_container']
+          - title: "Куки"
+            selectors: ['#app .bstar-cookie-info']
+          - title: "Кнопка-ссылка «App»"
+            description: >-
+              Кнопка-ссылка «App» в шапке сайта при наведении отображает
+              привелегии, доступные тем, кто скачает приложение BiliBili. Текст:
+              «Download the App to enjoy more features», «Higher video quality»,
+              «Smoother experience», «Download videos and watch offline»
+            selectors:
+              - >-
+                #app .bstar-header .bstar-header__actions >
+                :has(a[href="https://www.bilibili.tv/en/download"][target="_blank"]
+                [class*="bstar-downloadApp"])
+          - title: "Кнопка-ссылка «Premium»"
+            description: >-
+              Красно-бордовая кнопка-ссылка «Premium», аналогичная кнопке
+              в шапке сайта при наведении отображает привелегии, доступные тем,
+              кто купить Premium на BiliBili. Надписи: «Premium Benefits»,
+              «Premium Only», «Early Watching», «Early Watching»,
+              «Multi-Platform», «Free Downloads» и «Free Downloads»
+            selectors:
+              - >-
+                #app .bstar-header .bstar-header__actions >
+                :has(a [class*="bstar-premium"])
+      SidebarLeft:
+        description: "Сайдбар (панель слева)"
+        super_selector: '#app .bstar-sidebar'
+        selectors:
+          - title: "Подвал сайдбара"
+            description: >-
+              Подвал сайдбара. Содержит следующие ссылки: «About us»,
+              «Contact us», «Get App», «Terms of Service», «Privacy Policy»,
+              «Advertising Policy», «Punishment Rules for Content Violations»,
+              «Punishment Rules for Account Violations» и «Infringement
+              Complaint», а также текст «© 2025 BiliBili» и
+              «provided by balaboom»
+            selectors: ['.bstar-sidebar__footer']
+          - title: "Пустой блок «Followed»"
+            description: >-
+              Блок «Followed». Если пользователь не залогинен, то отображает
+              следующий текст: «Log in to view your "Followed" content.»,
+              а также голубую кнопку «Sign In»
+            # (Селектор успешно учитывает, авторизован ли пользоавтель или нет)
+            selectors: ['.bstar-sidebar__followings:has(.bstar-sidebar__followings-tips)']
+      VideoPage:
+        description: "Веб-страница видео"
+        super_selector: '#app'
+        selectors:
+          - title: "Баннер с просьбой купить скачать приложение"
+            description: >-
+              Баннер-картинка с просьбой скачать приложение BiliBili.
+              Располагается в сайдбаре правее видео, выше рекомендаций
+              (т.е. рекомендуемых к просмотру видео)
+            selectors: ['.video-play .video-player__right .play-page-banner']

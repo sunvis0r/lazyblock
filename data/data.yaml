@@ -750,6 +750,14 @@ filters:
                 :has(> [aria-label="User navigation"]) :has(> * >
                 [href*="tab=repositories"]) :has(>
                 [href*="/organizations/enterprise_plan"])
+  - title: "GitHub Docs (документация гитхаба)"
+    domains: ["docs.github.com"]
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Подвал"
+            selectors: ["#main-content + footer"]
   - title: "Авито (avito)"
     domains: ["avito.ru"]
     selector_groups:

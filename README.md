@@ -34,3 +34,11 @@ https://github.com/sunvis0r/lazyblock/releases/latest/download/cosmetic_filters.
 ### Запуск
 
 Запустить генератор: [generate.cmd](./generate.cmd)
+
+## Contributing
+
+Ветки:
+* `main` — стабильная ветка релизов.
+
+Теги:
+* `unstable` — последняя нестабильная сборка.

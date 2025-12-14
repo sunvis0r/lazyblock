@@ -48,6 +48,7 @@ filters:
             # ```
             selectors:
               - "#rso #tads" # Реклама сверху поисковой выдачи
+              - "#rcnt #tads" # Реклама сверху поисковой выдачи
               - "#bottomads" # Реклама снизу поисковой выдачи
           #- title: "Приложения Google и кнопка «Войти»"
           #  #description:
@@ -339,6 +340,15 @@ filters:
               Квадратные iframe-ы с рекламой выше и ниже сайдбара
               (панели справа). Надпись: «PROMOTED»
             selectors: ['[bundlename="sidebar_ad"]']
+          - title: "RECENT POSTS"
+            description: >-
+              Блок «RECENT POSTS». Здесь появляются посты, которые я недавно
+              посещал. Это ненужный функционал, т.к. у браузеров всегда есть
+              история. Если же пользователь зашёл из режима «Инкогнито», то
+              потребность в данном блоке действительно может возникнуть. Но это
+              скорее исключение, чем правило. Если же так нужно узнать последние
+              посты, то можно временно и выключить uBlock Origin.
+            selectors: ['#right-sidebar-contents recent-posts']
       PostPage:
         description: "Страница поста"
         super_selector: "shreddit-app"
@@ -676,6 +686,7 @@ filters:
       - "wikidata.org"
       - "wikimedia.org"
       - "fandom.com"
+      - "wiki.gg"
       - "neerc.ifmo.ru" # Сайт «Викиконспекты» (https://neerc.ifmo.ru/wiki/index.php?title=Заглавная_страница)
     selector_groups:
       WebUI:
@@ -1154,3 +1165,33 @@ filters:
               Располагается в сайдбаре правее видео, выше рекомендаций
               (т.е. рекомендуемых к просмотру видео)
             selectors: ['.video-play .video-player__right .play-page-banner']
+  - title: "Fandom (бывш. Wikia)"
+    domains: ["fandom.com"]
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Подвал"
+            selectors: ['footer.global-footer']
+          - title: "Уведомление-welcome"
+            description: >-
+              Появляется внизу слева, но правее левого сайдбара. Текст
+              на примере Terraria Wiki (terraria.fandom.com):
+              «Discussions are now available on the Terraria Wiki.»,
+              «Miss the old Hydra Skin? Try out our Hydralize gadget! Visit the
+              preferences page while logged in and turn on the gadget.»
+            selectors: ['.notifications-placeholder:has(.sitenotice)']
+          - title: "Сайдбар (слева)"
+            selectors: ['#global-explore-navigation']
+  - title: "wiki.gg"
+    domains: ["wiki.gg"]
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Реклама"
+            description: >-
+              Рекламный баннер выше вики-страницы и ниже (выше подвала).
+            selectors:
+              - '#content #wikigg-sl-header:has([target="_blank"])'
+              - '#content #wikigg-sl-footer:has([target="_blank"])'

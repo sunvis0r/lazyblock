@@ -1256,3 +1256,35 @@ filters:
               - >-
                 :has(> [data-apiary-widget-name="@marketfront/RecomEntity"]
                 [data-apiary-widget-name="@monetize/RecomMediaAdv"])
+  - title: "Мегамаркет"
+    domains: ["megamarket.ru"]
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Куки"
+            selectors: ['#app .cookie-notification']
+  - title: "Магнит Маркет" # Бывш. «Kazan Express»
+    domains: ["mm.ru"]
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Всплывашка с рекламой"
+            description: >-
+              Квадратный блок со скруглёнными углами, предлагающий купить товар
+              из определённой категории / определённого бренда. Появляется внизу
+              справа. Прикреплён к экрану. Текущий текст: «Вам какой кофе?»,
+              «В зёрнах, молотый или растворимый — выбирайте свой Monarch со
+              скидками в Магнит Маркете». Ниже текста расположена кнопка
+              «Заказать» красно-оранжевого оттенка
+            selectors: ['.mm-popup-promo']
+          - title: "Подвал"
+            selectors: ['.app-footer']
+          - title: "Каталог ниже шапки"
+            description: >-
+              Каталог с категориями. Расположен ниже шапки. Пользователю
+              НЕ НУЖЕН, т.к. более обширный каталог расположен по нажатию кнопки
+              «Каталог» выше (правее логотипа Магнит Маркета). Данный блок
+              только глаза мозолит
+            selectors: ['.app-header-bottom:has(.categories-list)']

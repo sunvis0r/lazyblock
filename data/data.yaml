@@ -214,18 +214,18 @@ filters:
         description: "Плитки товаров"
         super_selector: "#layoutPage .tile-root"
         selectors:
-          - title: "«Чёрная пятница» поверх тамбнейла продукта"
+          - title: "Надписи поверх тамбнейла продукта"
             tags: ["junk"]
-            selectors: ['section:has([title="Чёрная пятница"])']
-          - title: "«Вау-цены» поверх тамбнейла продукта"
-            tags: ["junk"]
-            selectors: ['section:has([title="Вау-цены"])']
-          - title: "«Цена что надо» поверх тамбнейла продукта"
-            tags: ["junk"]
-            selectors: ['section:has([title="Цена что надо"])']
-          - title: "«Распродажа» поверх тамбнейла продукта"
-            tags: ["junk"]
-            selectors: ['section:has([title="Распродажа"])']
+            selectors:
+              - 'section:has([title="Чёрная пятница"])'
+              - 'section:has([title="Вау-цены"])'
+              - 'section:has([title="Цена что надо"])'
+              - 'section:has([title="Электронная"])'
+              - 'section:has([title="Распродажа"])'
+              - 'section:has([title="Новинка"])'
+              - 'section:has([title*="баллов за отзыв"])'
+              - 'section:has([title^="Осталось"])' # «Осталась 1 шт»
+              - 'section:has([title^="Осталась"])' # «Осталось 2 шт»
           - title: "Значок Ozon и надпись «Ozon» рядом с количеством отзывов"
             description: "Сам Ozon никак не описывает для чего они"
             tags: ["junk"]
@@ -267,6 +267,14 @@ filters:
           - title: "Нижняя часть шапки"
             description: "Всё что является нижней частью шапки"
             selectors: ['[data-widget="wallpaper"] #stickyHeader ~ *']
+          - title: "«Товары российских брендов»"
+            description: >-
+              Длинный тонкий баннер-картинка на всю длину экрана ниже шапки.
+              Надпись на картинке: «Товары российских брендов»
+            selectors:
+              - >-
+                header[data-widget="header"] ~
+                [data-widget="row"]:has([target="_blank"][href*="sdelano-v-rossii"])
           - title: "Навигационная панель сверху"
             description: >-
               Навигационная панель сверху со следующими ссылками: «Ozon fresh»,
@@ -1195,3 +1203,56 @@ filters:
             selectors:
               - '#content #wikigg-sl-header:has([target="_blank"])'
               - '#content #wikigg-sl-footer:has([target="_blank"])'
+  - title: "Яндекс Маркет"
+    domains: ["market.yandex.ru"]
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Подвал"
+            selectors: ['#footerVisibilityWrapper']
+          - title: "Рекламный баннер выше шапки"
+            description: >-
+              Длинный рекламный баннер выше шапки
+            selectors:
+              - >-
+                [data-apiary-widget-name="@marketfront/MadvHeaderPromo"]:has(~
+                #MainHeader)
+      SearchResultsPage:
+        description: "Веб-страница поисковой выдачи"
+        selectors:
+          - title: "«Хлебные крошки» запроса"
+            description: >-
+              «Хлебные крошки» поискового запроса по категориям, например:
+              «Продукты - Макароны, крупы - Макароны». Данный блок расположен
+              ниже поисковой выдачи и ниже пагинации
+            selectors: ['[data-apiary-widget-name="@light/SearchBreadcrumbs"]']
+          - title: "Теги запроса"
+            description: >-
+              Теги, связанные с поисковым запросом. Расположены ниже хлебных
+              крошек (которые ниже пагинатора). Подзаголовки: «Часто ищут»,
+              «Подборки товаров», «Популярные товары», «Похожие категории»
+            # Название селектора («seo/SeoFooter») палит, что данный блок нужен
+            # скорее для SEO, чем в помощь покупателю.
+            selectors: ['[data-apiary-widget-name="@seo/SeoFooter"]']
+      SearchResults:
+        description: "Поисковая выдача"
+        super_selector: '[data-zone-name="main"]'
+        selectors:
+          - title: "Рекламные вставки / спонсорские товары"
+            description: >-
+              Спонсоркие/рекламные товары, не относящиеся к поисковой выдаче.
+              Имеют разный вид. На некоторых написано: «Товары бренда <...>»,
+              «Спонскорские товары», а на некоторых вообще нет надписи о рекламе
+              или спонсорстве.
+            selectors: ['[data-apiary-widget-name="@monetize/IncutConstructor"]']
+      MainPage:
+        description: "Заглавная страница"
+        selectors:
+          - title: "Релкамные вставки между товаров"
+            description: >-
+              Рекламные вставки, появляющиеся между карточек (плиток) товаров
+            selectors:
+              - >-
+                :has(> [data-apiary-widget-name="@marketfront/RecomEntity"]
+                [data-apiary-widget-name="@monetize/RecomMediaAdv"])

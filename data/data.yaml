@@ -153,7 +153,9 @@ filters:
             description: >-
               Реклама через каждые N элементов поисковой выдачи. Блоки рекламы
               оформлены как блоки видео (с тамбнейлом, заголовком, описанием)
-            selectors: ["> ytd-ad-slot-renderer"]
+            selectors:
+              # Раньше селектор был такой: «> ytd-ad-slot-renderer».
+              - 'ytd-rich-item-renderer:has(ytd-ad-slot-renderer)'
       Sidebar:
         description: "Сайдбар (панель слева)"
         super_selector: "tp-yt-app-drawer ytd-guide-renderer#guide-renderer"
@@ -263,7 +265,7 @@ filters:
           - title: "Подвал"
             # Если выделить просто «footer», то будет неправильно отображаться
             # скроллинг, дошедший до конца
-            selectors: ["footer > *"]
+            selectors: ['footer > *']
           - title: "Нижняя часть шапки"
             description: "Всё что является нижней частью шапки"
             selectors: ['[data-widget="wallpaper"] #stickyHeader ~ *']
@@ -620,6 +622,8 @@ filters:
       WebUI:
         description: "Веб-интерфейс"
         selectors:
+          - title: "Подвал"
+            selectors: ['footer#footer']
           - title: "Чат с Поддержкой"
             description: "Фиолетовая круглая кнопка справа внизу"
             selectors: ['#mainContainer [aria-label="Чат"]']

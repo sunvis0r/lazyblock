@@ -91,6 +91,15 @@ filters:
               Текст «Некоторые результаты поиска могли быть удалены
               в соответствии с местным законодательством»
             selectors: ['#botstuff > * > :has([href$="/policies/faq"])']
+          - title: "Синий йети"
+            description: >-
+              Анимированный сигий йети, отображаемый на экране если Google в
+              ответ на поисковый запрос вернул 0 результатов.
+              Причём он НЕ отображается, если выбрать поисковую категорию
+              «Видео».
+              
+              Меня заебало видеть этого йети.
+            selectors: ['#rcnt #botstuff div[role="img"]:has(svg g[clip-path])']
       SearchPageTopNav:
         description: "Верхняя навигационная панель"
         super_selector: "#main"
@@ -135,18 +144,25 @@ filters:
                 :not(:has([aria-expanded])):has([href^="/search?"][href*="tbm=nws"])
   - title: "YouTube"
     domains: ["youtube.com"]
+    # YouTube для плиток в мобильном веб-интерфейсе использует префикс «ytm»,
+    # а в десктопном — «ytd». Например, HTML-теги `ytm-rich-section-renderer`
+    # и `ytd-rich-section-renderer`.
     selector_groups:
       MainPage:
         description: "Заглавная страница"
-        super_selector: "ytd-app"
+        super_selector: "#app"  # В мобильной версии этот идентификатор «#app»
+        # присваивается HTML-контейнеру «<ytm-app>», а в десктопной —
+        # HTML-контейнеру «<ytd-app>».
         selectors:
           - title: "Реклама YouTube Premium"
             selectors: ["#primary #masthead-ad"]
           - title: "«Ещё темы»"
             description: "Карусель с видео, предложенными YouTube'ом"
-            selectors: ["ytd-rich-section-renderer"]
+            selectors:
+              - 'ytd-rich-section-renderer'
+              - 'ytm-rich-section-renderer'
       VideosSearchPage:
-        super_selector: "ytd-app #contents"
+        super_selector: "#app #contents"
         description: "Веб-страница поиска видео"
         selectors:
           - title: "Реклама"
@@ -156,20 +172,27 @@ filters:
             selectors:
               # Раньше селектор был такой: «> ytd-ad-slot-renderer».
               - 'ytd-rich-item-renderer:has(ytd-ad-slot-renderer)'
-      Sidebar:
+              - 'ytm-rich-item-renderer:has(ytm-ad-slot-renderer)'
+      LeftSidebar:
         description: "Сайдбар (панель слева)"
-        super_selector: "tp-yt-app-drawer ytd-guide-renderer#guide-renderer"
+        # Данный сайдбар встречается только на десктопной версии. У мобильной
+        # версии он отсутствует не только в плане UI/UX, но и в DOM-дереве.
+        super_selector: 'tp-yt-app-drawer #guide-renderer'
         selectors:
           - title: "Кнопка «Справка»"
             description: >-
               Кнопка «Справка» ниже кнопки «Жалобы»
               и выше кнопки «Отправить отзыв»
-            selectors: ['#sections > * ytd-guide-entry-renderer:has([title="Справка"])']
+            selectors:
+              - '#sections > * ytd-guide-entry-renderer:has([title="Справка"])'
           - title: "Кнопка «Отправить отзыв»"
             description: >-
               Кнопка «Отправить отзыв» ниже кнопки «Справка»
               и выше нижнего колонтитула
-            selectors: ['#sections > * ytd-guide-entry-renderer:has([title="Отправить отзыв"])']
+            selectors:
+              - >-
+                #sections > *
+                ytd-guide-entry-renderer:has([title="Отправить отзыв"])
           - title: "Нижний колонтитул"
             description: >-
               Нижний колонтитул сайдбара с «О сервисе», «Прессе»,
@@ -185,7 +208,11 @@ filters:
               Товары, предлагаемые YouTube'ом и автором видео к покупке
               (например, «Товары магазина "Channel Author"»).
               Находится ниже блока с описанием
-            selectors: ["#below > ytd-merch-shelf-renderer"]
+            selectors:
+              - '#below > ytd-merch-shelf-renderer'
+              - '#below > ytm-merch-shelf-renderer'  # На данный момент магазин
+              # есть только у десктопной версии сайта. Но на всякий данный
+              # селектор добавил.
           - title: "Всё, что ниже описания"
             description: >-
               Всё, что внутри блока описания видео (внизу этого блока),
@@ -627,6 +654,12 @@ filters:
           - title: "Чат с Поддержкой"
             description: "Фиолетовая круглая кнопка справа внизу"
             selectors: ['#mainContainer [aria-label="Чат"]']
+          - title: "Ссылки в шапке"
+            description: >-
+              Ненужные ссылки в шапке (выше поисковой строки): «Wibes», «Отели»,
+              «Авиабилеты», «Туры с <...>», «Ресейл», «Бренды», «Новостройки»,
+              «Для бизнеса», «Работа в WB»
+            selectors: ['#header #diamondsMenu']
       MainPage:
         description: "Заглавная страница"
         selectors:
@@ -984,16 +1017,23 @@ filters:
   - title: "ChatGPT"
     domains: ["chatgpt.com"]
     selector_groups:
+    # Особенность разметки ChatGPT (предположительно): у десктопного
+    # веб-интерфейса и у мобильного веб-интерфейса одни элементы скрываются,
+    # а другие отображаются. При переходе от десктопа к мобилке и наоборот на
+    # одной и той же веб-странице визуально элементы те же самые, хотя
+    # в DOM-дереве у каждого элемента есть свой дубль.
       WebUI:
         description: "Веб-интерфейс"
         selectors:
-          - title: "Реклама сверху поседерине"
+          - title: "Реклама «Перейти на Plus»"
             description: >-
-              Кнопка-всплывашка «Перейти на Plus» (ИЛИ «Бесплатное предложение»)
-              вверху посередине. Цвет: фиолетовый
+              Кнопка-всплывашка «Перейти на Plus» (ИЛИ «Бесплатное предложение»
+              ИЛИ «Перейти на Go») вверху посередине. Цвет: фиолетовый
             selectors:
-              - '#page-header > :has(button > svg > path[d="M17.665 10C17.665 10.6877 17.1785 11.2454 16.5488 11.3945L16.4219 11.4189C14.7098 11.6665 13.6129 12.1305 12.877 12.8623C12.1414 13.5938 11.6742 14.6843 11.4238 16.3887C11.3197 17.0973 10.7182 17.665 9.96484 17.665C9.27085 17.665 8.68836 17.1772 8.53613 16.5215C8.12392 14.7459 7.6623 13.619 6.95703 12.8652C6.31314 12.1772 5.39414 11.7268 3.88672 11.4688L3.57715 11.4199C2.88869 11.319 2.33496 10.734 2.33496 10C2.33496 9.26603 2.88869 8.681 3.57715 8.58008L3.88672 8.53125C5.39414 8.27321 6.31314 7.82277 6.95703 7.13477C7.6623 6.38104 8.12392 5.25413 8.53613 3.47852L8.56934 3.35742C8.76133 2.76356 9.31424 2.33496 9.96484 2.33496C10.7182 2.33497 11.3197 2.9027 11.4238 3.61133L11.5283 4.22266C11.7954 5.58295 12.2334 6.49773 12.877 7.1377C13.6129 7.86952 14.7098 8.33351 16.4219 8.58105C17.1119 8.68101 17.665 9.26667 17.665 10Z"]):not(:has(> button))'
-              - '#page-header > :has(button > svg > path[d="M16.002 10.665H10.665V16.835H14.167C15.1803 16.8348 16.002 16.0133 16.002 15V10.665ZM3.99805 15C3.99805 16.0133 4.81972 16.8348 5.83301 16.835H9.33496V10.665H3.99805V15ZM16.835 8.33301C16.8348 7.77995 16.3861 7.33203 15.833 7.33203H10.665V9.33496H16.667C16.7597 9.33478 16.8348 9.2597 16.835 9.16699V8.33301ZM3.16504 9.16699C3.16521 9.2597 3.2403 9.33479 3.33301 9.33496H9.33496V7.33203H4.16699C3.61389 7.33203 3.16521 7.77995 3.16504 8.33301V9.16699ZM9.33496 4.58301C9.33479 3.79994 8.70006 3.16521 7.91699 3.16504C7.13378 3.16504 6.49822 3.79983 6.49805 4.58301C6.49805 5.36633 7.13367 6.00195 7.91699 6.00195H9.33496V4.58301ZM10.665 6.00195H12.083C12.8663 6.00195 13.502 5.36633 13.502 4.58301C13.5018 3.79983 12.8662 3.16504 12.083 3.16504C11.2999 3.16521 10.6652 3.79994 10.665 4.58301V6.00195ZM14.832 4.58301C14.832 5.10264 14.6852 5.58752 14.4346 6.00195H15.833C17.1206 6.00195 18.1649 7.04541 18.165 8.33301V9.16699C18.1649 9.75495 17.825 10.2616 17.332 10.5068V15C17.332 16.7479 15.9148 18.1649 14.167 18.165H5.83301C4.08518 18.1649 2.66797 16.7479 2.66797 15V10.5068C2.17498 10.2616 1.83509 9.75495 1.83496 9.16699V8.33301C1.83514 7.04541 2.87936 6.00195 4.16699 6.00195H5.56543C5.31485 5.58752 5.16797 5.10264 5.16797 4.58301C5.16814 3.06529 6.39924 1.83496 7.91699 1.83496C8.75066 1.83506 9.49604 2.20774 10 2.79395C10.504 2.20774 11.2493 1.83506 12.083 1.83496C13.6008 1.83496 14.8319 3.0653 14.832 4.58301Z"]):not(:has(> button))'
+              - >-
+                #page-header :has(> button[type="button"] >
+                svg[aria-hidden="true"]):has(> button[type="button"][aria-label][tabindex="0"]
+                > svg[aria-hidden="true"]):not(:has(button[aria-expanded]))
           - title: "Всплывашка «Недостаточно места»"
             description: >-
               Всплывашка, появляющаяся над формой ввода текста.
@@ -1166,7 +1206,8 @@ filters:
               следующий текст: «Log in to view your "Followed" content.»,
               а также голубую кнопку «Sign In»
             # (Селектор успешно учитывает, авторизован ли пользоавтель или нет)
-            selectors: ['.bstar-sidebar__followings:has(.bstar-sidebar__followings-tips)']
+            selectors:
+              - '.bstar-sidebar__followings:has(.bstar-sidebar__followings-tips)'
       VideoPage:
         description: "Веб-страница видео"
         super_selector: '#app'
@@ -1268,6 +1309,12 @@ filters:
         selectors:
           - title: "Куки"
             selectors: ['#app .cookie-notification']
+          - title: "Блок «Войдите по Сбер ID»"
+            description: >-
+              Тёмный блок «Войдите по Сбер ID» ниже кнопки «Войти». Текст:
+              «Сможете получать бонусы и обменивать их на скидки до 99%».
+              Также, присутствует фиолетовая кнопка «Подробнее»
+            selectors: ['#app .loyalty-onboarding']
   - title: "Магнит Маркет" # Бывш. «Kazan Express»
     domains: ["mm.ru"]
     selector_groups:
@@ -1292,3 +1339,153 @@ filters:
               «Каталог» выше (правее логотипа Магнит Маркета). Данный блок
               только глаза мозолит
             selectors: ['.app-header-bottom:has(.categories-list)']
+  - title: "Яндекс"
+    domains: ["ya.ru"]
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Подвал"
+            selectors: ['body > .b-page__footer:has(footer)']
+          - title: "Реклама Яндекс Браузера"
+            description: >-
+              Реклама Яндекс Браузера на весь экран. См. поисковый запрос
+              «скачать браузер»
+            selectors: ['body > div.Modal:has(.Distribution-Content)']
+          - title: "«Установите Яндекс Браузер»"
+            description: >-
+              Цветная (градиентная) кнопка «Установите Яндекс Браузер» в шапке
+            selectors:
+              - >-
+                .HeaderDesktop .HeaderDesktopActions
+                .HeaderDesktopActions-Distribution
+          - title: "Кнопка Алиса"
+            description: >-
+              Кнопка с логотипом Алисы в шапке, правее от градиентной кнопки
+              «Установите Яндекс Браузер»
+            selectors:
+              - >-
+                .HeaderDesktop .HeaderDesktopActions .HeaderDesktopActions-Alice
+          - title: "Поисковая категория «алиса»"
+            description: >-
+              Ссылка «алиса» в нижней части шапки — там где «поиск», «картинки»,
+              «видео», «карты», «товары», «финансы» и др.
+            selectors:
+              - >-
+                .HeaderDesktop .HeaderNav
+                .HeaderNav-DynamicTabs [href*="promo=force_neuro"]
+          - title: "Поп-ап «Алиса AI»"
+            description: >-
+              Серый поп-ап, возникающий справа сверху (но ниже шапки). Текст:
+              «Новая Алиса AI — отвечает в чате с картинками и видео»
+            selectors: ['.main .Distribution-Popup']
+      ImagesSearchPage:
+        description: "Веб-страница поиска картинок"
+        super_selector: '[id^="ImagesApp"]'
+        selectors:
+          - title: "Реклама выше всех картинок"
+            description: >-
+              Длинный блок с рекламой выше всех картинок, но ниже шапки, ниже
+              параметров поиска («Размер», «Ориентация», «Тип», «Цвет» и т.д.)
+              и ниже баннера-предупреждения (например о скрытии изображений:
+              «Некоторые изображения были удалены из результатов поиска.
+              Подробнее»)
+            selectors: ['.AdvMastHead']
+          - title: "Реклама между картинками"
+            description: >-
+              Длинный рекламный блок (на всю длину экрана)
+            selectors:
+              # Селектор СВЯЗАН с селектором от "Блок «Смотрите также»"
+              - >-
+                .SerpList [role="list"] >
+                .JustifierRowLayout-Incut:not(:has(.JustifierRowLayout-Item)):has([data-log-node])
+          - title: "Блок «Смотрите также»"
+            description: >-
+              Длинный блок «Смотрите также» (во всю длину экрана). Очень похож
+              на другой блок — рекламный. Располагает несколько картинок с
+              соответствующими надписями, дополняющими текущий поисковый запрос.
+            selectors:
+              # Селектор СВЯЗАН с селектором от "Реклама между картинками"
+              - >-
+                .SerpList [role="list"] >
+                .JustifierRowLayout-Incut:not(:has(.JustifierRowLayout-Item)):has(.SearchRelatedGallery)
+          - title: "Подвал"
+            description: >-
+              Подвал конкретно у поиска картинок
+            selectors: ['.SearchFooter']
+      ImagesViewer:
+        description: >-
+          Просмотрщик картинок. Открывается в поиске изображений при нажатии на
+          любую картинку
+        super_selector: '.Modal-Wrapper .ImagesViewer-Layout'
+        selectors:
+          - title: "Реклама в сайдбаре"
+            description: >-
+              Реклама в сайдбаре (панель правее картинки)
+            selectors:
+              # Предыдущий селектор:
+              # ```
+              # .ImagesViewer-Sidebar :has(> .ViewerTags) ~ :has([data-log-node])
+              # ```
+              - >-
+                .ImagesViewer-Sidebar :has(> h2) ~
+                :has([data-log-node])
+  - title: "Amazon (амазон)"
+    domains: ['amazon.com']
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Подвал"
+            selectors: ['#navFooter']
+      SearchPage:
+        description: "Веб-страница поисковой выдачи"
+        super_selector: '#search'
+        selectors:
+          - title: "Реклама"
+            description: >-
+              Реклама посреди результатов поисковой выдачи
+            selectors:
+              - '.s-result-list > .s-result-item:has([class*="sponsored"])'
+          - title: "«Need help?»"
+            description: >-
+              Блок «Need help?» ниже пагинации. Бесполезен и занимает много
+              места. Текст: «Need help?», «Visit the help section or contact us»
+            selectors:
+              - >-
+                .s-result-list >
+                .s-result-item:has([data-cel-widget*="FEEDBACK"])
+  - title: "eBay"
+    domains: ['ebay.com']
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Подвал"
+            selectors: ['.footer-panel-container']
+      ProductPage:
+        description: "Веб-страница товара"
+        super_selector: '.main-container'
+        selectors:
+          - title: "Спонсорские товары"
+            description: >-
+              Длинный тонкий серый блок со спонсорскими товарами выше текущего
+              открытого товара. Надписи: «Find similar items from
+              <название_магазина> (1.9K items sold)», «Shop store on eBay»,
+              «Sponsored»
+            selectors:
+              # «:has([data-testid="x-pda-placements"])» — это для того, чтобы
+              # не ломалась вёрстка на веб-странице уже проданного товара
+              # («This listing sold on Mon, Dec 15 at 1:50 PM»).
+              - >-
+                :has(> #CenterPanel) >
+                [class*="top-panel"]:has([data-viewport*="trackableId"]):has([data-testid="x-pda-placements"])
+              # eBay каким-то образом обнаруживает, что блок скрыт, поэтому
+              # JavaScript'ом пытается его добавлять снова, но уже под разными
+              # селекторами (например, <section> вместо <div> и с iframe-защитой
+              # внутри). Так происходит раз 6, а затем eBay сдаётся. Поэтому
+              # нужен селектор ниже.
+              - >-
+                :has(> #CenterPanel) >
+                [class*="top-panel"]:has([data-viewport*="trackableId"]):has([data-testid="x-pda-placements"])
+                ~ :has(~ #CenterPanel)

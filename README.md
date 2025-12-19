@@ -1,6 +1,7 @@
 # lazyblock
 
-Список наиболее полезных фильтров [uBlock Origin](https://github.com/gorhill/uBlock).
+Генератор и список фильтров [uBlock Origin](https://github.com/gorhill/uBlock),
+устойчивых к редизайну и обфускациям.
 
 ## Использование
 

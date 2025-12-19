@@ -3,6 +3,18 @@ filters:
     domains: ["google.com"]
     # Google известен своими обфускациями DOM-дерева.
     selector_groups:
+      MainPage:
+        description: "Заглавная страница"
+        selectors:
+          - title: "Подвал"
+            selectors:
+              # У десктопной версии:
+              - >-
+                body > :has(> div[role="navigation"]) >
+                div:has([href*="policies.google.com/privacy"])
+              # У мобильной версии:
+              - >-
+                body > #footer:has([href*="accounts.google.com/Logout"])
       ImagesSearchResults:
         description: "Поиск картинок"
         super_selector: ['#main']
@@ -11,6 +23,8 @@ filters:
             description: >-
               Удаление любых блоков, что находятся среди картинок но не являются
               таковыми (например, блок «Похожие запросы»)
+            # На данный момент, у мобильного веб-интерфейса данный блок
+            # не был замечен.
             selectors:
               - >-
                 #res #search :has(> [data-lpage]) >
@@ -20,7 +34,7 @@ filters:
         selectors:
           - title: "Подвал"
             tags: ["junk"]
-            selectors: ["footer", "#sfooter"]
+            selectors: ['body > footer', '#sfooter']
           - title: "Голосовой поиск"
             description: >-
               Убирает кнопку голосового поиска, расположенную в поисковой строке
@@ -150,17 +164,54 @@ filters:
     selector_groups:
       MainPage:
         description: "Заглавная страница"
-        super_selector: ['#app']  # В мобильной версии этот идентификатор «#app»
-        # присваивается HTML-контейнеру «<ytm-app>», а в десктопной —
-        # HTML-контейнеру «<ytd-app>».
+        super_selector:
+          - 'ytd-app #primary'         # У десктопной версии.
+          - 'ytm-app .page-container'  # У мобильной версии.
+        # К сожалению, некоторые «ytm-rich-section-renderer» (или
+        # «ytd-rich-section-renderer») полезны, но присутствуют только в
+        # мобильной версии веб-интерфейса. Так, «ytm-rich-section-renderer»
+        # используется в основном для мусора типа шортсов, но иногда встречаются
+        # посты, сделанные авторами ютуб-каналов.
         selectors:
           - title: "Реклама YouTube Premium"
-            selectors: ["#primary #masthead-ad"]
-          - title: "«Ещё темы»"
-            description: "Карусель с видео, предложенными YouTube'ом"
+            selectors: ["#masthead-ad"]
+          - title: '«Shorts»'
             selectors:
-              - 'ytd-rich-section-renderer'
-              - 'ytm-rich-section-renderer'
+              # У мобильной версии:
+              - 'ytm-rich-section-renderer:has(ytm-shorts-lockup-view-model)'
+              # У десктопной версии:
+              - 'ytd-rich-section-renderer:has(ytm-shorts-lockup-view-model)'
+              # (В десктопной версии используется именно ytm-shorts,
+              # а не ytd-shorts.)
+          - title: '«Ещё темы» / «Популярные новости»'
+            selectors:
+              # У десктопной версии:
+              - 'ytd-rich-section-renderer:has(ytd-chips-shelf-with-video-shelf-renderer)'
+              - 'ytd-rich-section-renderer:has(yt-lockup-view-model)'
+              # У мобильной версии:
+              - 'ytm-rich-section-renderer:has(ytm-video-with-context-renderer)'
+              # Иногда у мобильной версии данный блок появляется без каких-либо
+              # видео — только теги.
+              - 'ytm-rich-section-renderer:has(.ytm-chips-shelf-view-model__chips-shelf-item)'
+              # Для мобильной версии на всякий случай добавил ещё вот такие
+              # селекторы:
+              - 'ytm-rich-section-renderer:has(ytm-chips-shelf-with-video-shelf-renderer)'
+              - 'ytm-rich-section-renderer:has(yt-lockup-view-model)'
+          - title: '«YouTube Игротека»'
+            selectors:
+              # У мобильной версии:
+              - 'ytm-rich-section-renderer:has([href^="/playables"])'
+              # У десктопной версии:
+              - 'ytd-rich-section-renderer:has([href^="/playables"])'
+          - title: 'Реклама'
+            description: >-
+              Вставка рекламы между видосами
+            selectors:
+              # У десктопной версии:
+              - 'ytd-rich-item-renderer:has(ytd-ad-slot-renderer)'
+              # У мобильной версии рекламу вроде заметил, но не успел поймать
+              # селектор. Поэтому, пускай будет такой:
+              - 'ytm-rich-item-renderer:has(ytm-ad-slot-renderer)'
       VideosSearchPage:
         super_selector: ['#app #contents']
         description: "Веб-страница поиска видео"
@@ -201,7 +252,9 @@ filters:
             selectors: ["#footer"]
       VideoPage:
         description: "Веб-страница с открытым видео"
-        super_selector: ['#primary']
+        super_selector:
+          - '#page-manager'   # У десктопной версии.
+          - '.page-container' # У мобильной версии.
         selectors:
           - title: "Магазин"
             description: >-
@@ -209,10 +262,10 @@ filters:
               (например, «Товары магазина "Channel Author"»).
               Находится ниже блока с описанием
             selectors:
-              - '#below > ytd-merch-shelf-renderer'
-              - '#below > ytm-merch-shelf-renderer'  # На данный момент магазин
-              # есть только у десктопной версии сайта. Но на всякий данный
-              # селектор добавил.
+              - '#primary #below > ytd-merch-shelf-renderer'
+              - '#primary #below > ytm-merch-shelf-renderer'  # На данный момент
+              # магазин есть только у десктопной версии сайта. Но на всякий
+              # данный селектор добавил.
           - title: "Всё, что ниже описания"
             description: >-
               Всё, что внутри блока описания видео (внизу этого блока),
@@ -221,11 +274,14 @@ filters:
               созданы автоматически. Подробнее»), «Расшифровка видео»
               («Расшифровка позволяет быстро находить в видео нужную информацию»
               и кнопка «Показать текст видео»)
-            selectors: ["#below ytd-watch-metadata #description #structured-description"]
+            selectors:
+              - >-
+                #primary #below ytd-watch-metadata #description
+                #structured-description
           - title: "Кнопка «Стать спонсором»"
             description: >-
               Кнопка «Стать спонсором», находящаяся левее кнопки «Подписаться»
-            selectors: ["#sponsor-button"]
+            selectors: ['#primary #sponsor-button']
   - title: "Ozon"
     domains: ["ozon.ru"]
     selector_groups:
@@ -333,7 +389,7 @@ filters:
           - title: "Рекламные посты"
             description: >-
               Рекламные посты, появляющиеся посреди ленты
-              через каждые 5-7 обычных постов
+              через каждые 5-7 обычных постов. Текст: «Promoted»
             tags: ["ad"]
             selectors: ["shreddit-ad-post", "shreddit-ad-post + hr"]
       WebUI:
@@ -341,14 +397,20 @@ filters:
         super_selector: ['shreddit-app reddit-header-large']
         selectors:
           - title: "Кнопка «Advertise on Reddit»"
-            description: "Кнопка «Advertise on Reddit» вверху справа"
+            description: >-
+              Кнопка «Advertise on Reddit» вверху справа (в шапке).
+              На значке нарисовано слово «Ad»
             selectors: ['[data-part="advertise"]']
       SidebarLeft:
         description: "Сайдбар (панель слева)"
-        super_selector: ['shreddit-app #left-sidebar-container']
+        # Предыдущий родительский селектор (он работал на десктопе, но
+        # НЕ работал на мобильной версии):
+        # ```
+        # shreddit-app #left-sidebar-container
+        # ```
+        super_selector: ['shreddit-app #left-sidebar']
         selectors:
           - title: "«GAMES ON REDDIT»"
-            description: "Кнопка «Advertise on Reddit» вверху справа"
             selectors:
               - ":has(> games-section-badge-controller)"
               - ":has(> games-section-badge-controller) + hr"
@@ -357,8 +419,10 @@ filters:
               Блок «RESOURCES». Ссылки в блоке: «About Reddit», «Advertise»,
               «Developer Platform», «Reddit Pro» («BETA»), «Help», «Blog»,
               «Careers», «Press», «Communities», «Best of Reddit»,
-              «Reddit Rules», «Privacy Policy», «User Agreement», «Accessibility»
-            selectors: [':has(> faceplate-expandable-section-helper #RESOURCES)']
+              «Reddit Rules», «Privacy Policy», «User Agreement»,
+              «Accessibility»
+            selectors:
+              - ':has(> faceplate-expandable-section-helper #RESOURCES)'
           - title: "«All rights reserved»"
             description: "Надпись «Reddit, Inc. © 2025. All rights reserved.»"
             selectors: [':has(> [href="https://redditinc.com"])']
@@ -397,7 +461,7 @@ filters:
         description: "Остальное"
         selectors:
           - title: "Предложения сыграть в игру"
-            description: "Игры оформлена и выглядит как обычные пост в Reddit"
+            description: "Игры оформлены как обычные посты в Reddit"
             selectors: ["#main-content article:has(> shreddit-post[game])"]
   - title: "Stack Overflow и Stack Exchange"
     domains:

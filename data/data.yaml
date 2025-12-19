@@ -5,7 +5,7 @@ filters:
     selector_groups:
       ImagesSearchResults:
         description: "Поиск картинок"
-        super_selector: "#main"
+        super_selector: ['#main']
         selectors:
           - title: "«Похожие запросы»"
             description: >-
@@ -102,7 +102,7 @@ filters:
             selectors: ['#rcnt #botstuff div[role="img"]:has(svg g[clip-path])']
       SearchPageTopNav:
         description: "Верхняя навигационная панель"
-        super_selector: "#main"
+        super_selector: ['#main']
         selectors:
             # `:not([__is_owner])` позволяет отфильтровать только те ссылки,
             # которые НЕ в выпадающем меню «Ещё». Чтобы само меню «Ещё»
@@ -150,7 +150,7 @@ filters:
     selector_groups:
       MainPage:
         description: "Заглавная страница"
-        super_selector: "#app"  # В мобильной версии этот идентификатор «#app»
+        super_selector: ['#app']  # В мобильной версии этот идентификатор «#app»
         # присваивается HTML-контейнеру «<ytm-app>», а в десктопной —
         # HTML-контейнеру «<ytd-app>».
         selectors:
@@ -162,7 +162,7 @@ filters:
               - 'ytd-rich-section-renderer'
               - 'ytm-rich-section-renderer'
       VideosSearchPage:
-        super_selector: "#app #contents"
+        super_selector: ['#app #contents']
         description: "Веб-страница поиска видео"
         selectors:
           - title: "Реклама"
@@ -177,7 +177,7 @@ filters:
         description: "Сайдбар (панель слева)"
         # Данный сайдбар встречается только на десктопной версии. У мобильной
         # версии он отсутствует не только в плане UI/UX, но и в DOM-дереве.
-        super_selector: 'tp-yt-app-drawer #guide-renderer'
+        super_selector: ['tp-yt-app-drawer #guide-renderer']
         selectors:
           - title: "Кнопка «Справка»"
             description: >-
@@ -201,7 +201,7 @@ filters:
             selectors: ["#footer"]
       VideoPage:
         description: "Веб-страница с открытым видео"
-        super_selector: "#primary"
+        super_selector: ['#primary']
         selectors:
           - title: "Магазин"
             description: >-
@@ -231,7 +231,7 @@ filters:
     selector_groups:
       MainPage:
         description: "Заглавная страница"
-        super_selector: "#layoutPage"
+        super_selector: ['#layoutPage']
         selectors:
           - title: "Одна огромная плитка-карусель с рекламой"
             tags: ["ad"]
@@ -241,7 +241,7 @@ filters:
             selectors: ['[data-widget="imageList"]:has([title="Реклама"])']
       ProductTiles:
         description: "Плитки товаров"
-        super_selector: "#layoutPage .tile-root"
+        super_selector: ['#layoutPage .tile-root']
         selectors:
           - title: "Надписи поверх тамбнейла продукта"
             tags: ["junk"]
@@ -268,7 +268,7 @@ filters:
             selectors: ['> a:has(img[fetchpriority="auto"])']
       ProductPage:
         description: "Страница товара"
-        super_selector: "#layoutPage"
+        super_selector: ['#layoutPage']
         selectors:
           - title: "Хештеги"
             selectors: ['[data-widget="webHashtags"]']
@@ -287,7 +287,7 @@ filters:
                 [data-widget="webListReviews"]) > [data-widget="skuGrid"]
       WebUI:
         description: "Веб-интерфейс"
-        super_selector: "#layoutPage"
+        super_selector: ['#layoutPage']
         selectors:
           - title: "Подвал"
             # Если выделить просто «footer», то будет неправильно отображаться
@@ -328,7 +328,7 @@ filters:
     selector_groups:
       Ad:
         description: "Реклама"
-        super_selector: "shreddit-app shreddit-feed"
+        super_selector: ['shreddit-app shreddit-feed']
         selectors:
           - title: "Рекламные посты"
             description: >-
@@ -338,14 +338,14 @@ filters:
             selectors: ["shreddit-ad-post", "shreddit-ad-post + hr"]
       WebUI:
         description: "Веб-интерфейс"
-        super_selector: "shreddit-app reddit-header-large"
+        super_selector: ['shreddit-app reddit-header-large']
         selectors:
           - title: "Кнопка «Advertise on Reddit»"
             description: "Кнопка «Advertise on Reddit» вверху справа"
             selectors: ['[data-part="advertise"]']
       SidebarLeft:
         description: "Сайдбар (панель слева)"
-        super_selector: "shreddit-app #left-sidebar-container"
+        super_selector: ['shreddit-app #left-sidebar-container']
         selectors:
           - title: "«GAMES ON REDDIT»"
             description: "Кнопка «Advertise on Reddit» вверху справа"
@@ -364,7 +364,7 @@ filters:
             selectors: [':has(> [href="https://redditinc.com"])']
       SidebarRight:
         description: "Сайдбар (панель справа)"
-        super_selector: "shreddit-app #right-sidebar-container"
+        super_selector: ['shreddit-app #right-sidebar-container']
         selectors:
           - title: "Ссылки внизу сайдбара"
             description: >-
@@ -388,7 +388,7 @@ filters:
             selectors: ['#right-sidebar-contents recent-posts']
       PostPage:
         description: "Страница поста"
-        super_selector: "shreddit-app"
+        super_selector: ['shreddit-app']
         selectors:
           - title: "Реклама под постом"
             tags: ["ad"]
@@ -411,7 +411,7 @@ filters:
     selector_groups:
       LeftSidebar:
         description: "Сайдбар (панель слева)"
-        super_selector: "#left-sidebar"
+        super_selector: ['#left-sidebar']
         selectors:
           - title: "«AI Assist»"
             description: >-
@@ -449,7 +449,7 @@ filters:
             selectors: ['.nav-links > * :has(> [href="/collectives-all"])']
       RightSidebar:
         description: "Сайдбар (панель справа)"
-        super_selector: "#sidebar"
+        super_selector: ['#sidebar']
         selectors:
           - title: "Блог"
             description: "Ссылки на статьи из блога Stack Overflow"
@@ -493,7 +493,7 @@ filters:
             selectors: ['body > #announcement-banner:has([href*="//stackoverflow.com/ai-assist"])']
       QuestionPage:
         description: "Веб-страница вопроса"
-        super_selector: "#answers"
+        super_selector: ['#answers']
         selectors:
           - title: "Авторизоваться для ответа"
             description: >-
@@ -635,7 +635,7 @@ filters:
             selectors: ["footer"]
       Sidebar:
         description: "Сайдбар (панель справа)"
-        super_selector: ".sidebar"
+        super_selector: ['.sidebar']
         selectors:
           - title: "Статистика"
             selectors: [":has(> .statistics-body)"]
@@ -763,7 +763,7 @@ filters:
             selectors: ['ul[class*="ActionList-GroupList"] :has(> a[href="/copilot"])']
       SidebarRight:
         description: "Сайдбар (панель справа)"
-        super_selector: ".repository-content .Layout-sidebar"
+        super_selector: ['.repository-content .Layout-sidebar']
         selectors:
           - title: "«Readme»"
             description: >-
@@ -822,7 +822,7 @@ filters:
     selector_groups:
       WebUI:
         description: "Веб-интерфейс"
-        super_selector: "#app"
+        super_selector: ['#app']
         selectors:
           - title: "Подвал"
             selectors: ["[class*=\"module__footer\"]"]
@@ -844,7 +844,7 @@ filters:
             description: "Ссылка «#яПомогаю» сверху"
             selectors: ['[data-marker="header/navbar"] ul > li:has([href^="/avito-care"])']
       Page:
-        super_selector: "#app"
+        super_selector: ['#app']
         description: "Веб-страница объявления"
         selectors:
           - title: "Реклама Авито Рекламы"
@@ -1008,7 +1008,7 @@ filters:
     selector_groups:
       WebUI:
         description: "Веб-интерфейс"
-        super_selector: "#__aer_root__"
+        super_selector: ['#__aer_root__']
         selectors:
           - title: "Подвал"
             selectors: ['[class*="RedFooter_RedFooter__root__"]']
@@ -1064,7 +1064,7 @@ filters:
     selector_groups:
       WebUI:
         description: "Веб-интерфейс"
-        super_selector: "#app"
+        super_selector: ['#app']
         selectors:
           - title: "Реклама выше шапки сайта"
             description: "Большой длинный блок с рекламой выше шапки"
@@ -1086,7 +1086,7 @@ filters:
               - ".tm-layout__wrapper .tm-footer"
       SidebarRight:
         description: "Сайдбар (панель справа)"
-        super_selector: "#app .tm-page__sidebar"
+        super_selector: ['#app .tm-page__sidebar']
         selectors:
           - title: "Реклама выше и ниже блока «Читают сейчас»"
             selectors:
@@ -1100,7 +1100,7 @@ filters:
             selectors: ['.tm-company-widgets section[type="banner"]']
       ArticlePage:
         description: "Веб-страница статьи/поста/новости"
-        super_selector: "#app .tm-page"
+        super_selector: ['#app .tm-page']
         selectors:
           - title: "Реклама выше блока с комментариями"
             description: >-
@@ -1189,7 +1189,7 @@ filters:
                 :has(a [class*="bstar-premium"])
       SidebarLeft:
         description: "Сайдбар (панель слева)"
-        super_selector: '#app .bstar-sidebar'
+        super_selector: ['#app .bstar-sidebar']
         selectors:
           - title: "Подвал сайдбара"
             description: >-
@@ -1210,7 +1210,7 @@ filters:
               - '.bstar-sidebar__followings:has(.bstar-sidebar__followings-tips)'
       VideoPage:
         description: "Веб-страница видео"
-        super_selector: '#app'
+        super_selector: ['#app']
         selectors:
           - title: "Баннер с просьбой купить скачать приложение"
             description: >-
@@ -1282,7 +1282,7 @@ filters:
             selectors: ['[data-apiary-widget-name="@seo/SeoFooter"]']
       SearchResults:
         description: "Поисковая выдача"
-        super_selector: '[data-zone-name="main"]'
+        super_selector: ['[data-zone-name="main"]']
         selectors:
           - title: "Рекламные вставки / спонсорские товары"
             description: >-
@@ -1381,7 +1381,7 @@ filters:
             selectors: ['.main .Distribution-Popup']
       ImagesSearchPage:
         description: "Веб-страница поиска картинок"
-        super_selector: '[id^="ImagesApp"]'
+        super_selector: ['[id^="ImagesApp"]']
         selectors:
           - title: "Реклама выше всех картинок"
             description: >-
@@ -1417,7 +1417,7 @@ filters:
         description: >-
           Просмотрщик картинок. Открывается в поиске изображений при нажатии на
           любую картинку
-        super_selector: '.Modal-Wrapper .ImagesViewer-Layout'
+        super_selector: ['.Modal-Wrapper .ImagesViewer-Layout']
         selectors:
           - title: "Реклама в сайдбаре"
             description: >-
@@ -1440,7 +1440,7 @@ filters:
             selectors: ['#navFooter']
       SearchPage:
         description: "Веб-страница поисковой выдачи"
-        super_selector: '#search'
+        super_selector: ['#search']
         selectors:
           - title: "Реклама"
             description: >-
@@ -1465,7 +1465,7 @@ filters:
             selectors: ['.footer-panel-container']
       ProductPage:
         description: "Веб-страница товара"
-        super_selector: '.main-container'
+        super_selector: ['.main-container']
         selectors:
           - title: "Спонсорские товары"
             description: >-

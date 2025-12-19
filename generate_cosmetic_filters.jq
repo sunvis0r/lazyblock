@@ -24,14 +24,17 @@
 ($domains | join(",")) + "##" +
 (
     to_entries[].value
-    | .super_selector as $super_selector
+    | .super_selector? as $super_selector
     | .selectors[]
-    | (
-        if ($super_selector != null) and ($super_selector != "")
-        then
-            $super_selector + " "
-        else
+    | # Выполняется перемножение матриц (т.е. для каждого подселектора
+      # генерируется фильтр с каждым из родительских селекторов).
+      ( 
+        if $super_selector == null then
             ""
+        elif ($super_selector | type) == "array" then
+            ($super_selector[] + " ")
+        else
+            $super_selector + " "
         end
     ) + .selectors[]
 )

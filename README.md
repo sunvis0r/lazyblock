@@ -1,6 +1,6 @@
 # lazyblock
 
-Генератор и список фильтров [uBlock Origin](https://github.com/gorhill/uBlock),
+Генератор и список фильтров [uBlock Origin](https://addons.mozilla.org/addon/ublock-origin/),
 устойчивых к редизайну и обфускациям.
 
 ## Как импортировать

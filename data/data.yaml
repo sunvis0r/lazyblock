@@ -165,6 +165,8 @@ filters:
       MainPage:
         description: "Заглавная страница"
         super_selector:
+          # Раньше был селектор «#app». Он наблюдается в мобильной версии
+          # (у «ytm-app#app»), но не у десктопной версии.
           - 'ytd-app #primary'         # У десктопной версии.
           - 'ytm-app .page-container'  # У мобильной версии.
         # К сожалению, некоторые «ytm-rich-section-renderer» (или
@@ -213,8 +215,13 @@ filters:
               # селектор. Поэтому, пускай будет такой:
               - 'ytm-rich-item-renderer:has(ytm-ad-slot-renderer)'
       VideosSearchPage:
-        super_selector: ['#app #contents']
         description: "Веб-страница поиска видео"
+        super_selector:
+          # У десктопной версии:
+          - 'ytd-app #primary #header-container + #contents > ytd-item-section-renderer'
+          # У мобильной версии:
+          - 'ytm-app ytm-search > ytm-section-list-renderer > lazy-list > ytm-item-section-renderer'
+          # («#primary» у мобильной версии отсутствует)
         selectors:
           - title: "Реклама"
             description: >-
@@ -223,7 +230,23 @@ filters:
             selectors:
               # Раньше селектор был такой: «> ytd-ad-slot-renderer».
               - 'ytd-rich-item-renderer:has(ytd-ad-slot-renderer)'
+              - 'ytd-search-pyv-renderer:has(ytd-ad-slot-renderer)'
               - 'ytm-rich-item-renderer:has(ytm-ad-slot-renderer)'
+          - title: "Блок «Shorts»"
+            description: >-
+              Блок с несколькими Shorts'ами (на данный момент до 5 в ширину).
+              Появляется через каждые N элементов поисковой выдачи.
+            selectors:
+              - 'grid-shelf-view-model:has(ytm-shorts-lockup-view-model)'
+          - title: "Блок с лишними видео"
+            # На данный момент, такой блок появляется у десктопной версии.
+            description: >-
+              Блок с заголовками «Другие видео, которые посмотрели зрители» и
+              «Видео для вас». Блок «Видео для вас» — это вообще видео из
+              рекомендаций, которые не имеют отношения к текущему поисковому
+              запросу
+            selectors:
+              - 'ytd-shelf-renderer:has(#dismissible ytd-vertical-list-renderer)'
       LeftSidebar:
         description: "Сайдбар (панель слева)"
         # Данный сайдбар встречается только на десктопной версии. У мобильной
@@ -256,7 +279,7 @@ filters:
           - '#page-manager'   # У десктопной версии.
           - '.page-container' # У мобильной версии.
         selectors:
-          - title: "Магазин"
+          - title: "Магазин автора ютуб-канала"
             description: >-
               Товары, предлагаемые YouTube'ом и автором видео к покупке
               (например, «Товары магазина "Channel Author"»).
@@ -282,6 +305,31 @@ filters:
             description: >-
               Кнопка «Стать спонсором», находящаяся левее кнопки «Подписаться»
             selectors: ['#primary #sponsor-button']
+          - title: "Реклама в сайдбаре справа"
+            description: >-
+              Видео-реклама, отображаемая как все остальные видео в сайдбаре
+              правее от текущего открытого видео.
+            selectors:
+              # С десктопной версии:
+              - >-
+                #columns #secondary #related #items > ytd-item-section-renderer
+                > #contents > ytd-ad-slot-renderer
+              # Адаптивный дизайн (т.е. десктопная версия, если ей задать
+              # размеры экрана как у мобильной версии):
+              - >-
+                #columns #primary #below #related #items >
+                ytd-item-section-renderer > #contents > ytd-ad-slot-renderer
+          - title: "Реклама над блоком с рекомендованными видео"
+            description: >-
+              Реклама над блоком с рекомендованными видео. Не походит на видео
+              из рекомендуемых ютубом. Это видно с мобильной версии сайта,
+              у которой выше идёт описание текущего открытого видео, затем блок
+              с комментариями, затем блок с рекламой, затем блок с
+              рекомендуемыми видео
+            selectors:
+              - >-
+                .watch-below-the-player > .watch-content >
+                ytm-item-section-renderer:has(ad-slot-renderer)
   - title: "Ozon"
     domains: ["ozon.ru"]
     selector_groups:

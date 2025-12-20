@@ -3,7 +3,10 @@
 Генератор и список фильтров [uBlock Origin](https://github.com/gorhill/uBlock),
 устойчивых к редизайну и обфускациям.
 
-## Использование
+## Как импортировать
+
+Должно быть предустановлено браузерное расширение — блокировщик рекламы
+[uBlock Origin](https://addons.mozilla.org/addon/ublock-origin/).
 
 В настройках uBlock Origin во вкладке «Filter lists» нужно в самом низу нажать
 на «Import...» и вставить туда следующий URL:
@@ -11,8 +14,15 @@
 https://github.com/sunvis0r/lazyblock/releases/latest/download/cosmetic_filters.txt
 ```
 
-(Убедитесь, что опция «Parse and enforce cosmetic filters» вверху данной вкладки
-включена.)
+Нажмите на синюю кнопку «Apply changes» и дождитесь, как на экране появится
+«☑️ lazyblock».
+
+Готово! Фильтры импортированы.
+
+### Не работает?
+
+Убедитесь, что опция «Parse and enforce cosmetic filters» вверху вкладки
+«Filter lists» включена.
 
 Также, для оперативного обновления устаревших селекторов на исправленные,
 включите параметр «Auto-update filter lists».

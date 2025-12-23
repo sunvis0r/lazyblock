@@ -327,8 +327,14 @@ filters:
               с комментариями, затем блок с рекламой, затем блок с
               рекомендуемыми видео
             selectors:
+              # Раньше работало вот это:
               - >-
                 .watch-below-the-player > .watch-content >
+                ytm-item-section-renderer:has(ad-slot-renderer)
+              # Теперь работает вот это:
+              - >-
+                .watch-below-the-player > .watch-content >
+                .related-chips-slot-wrapper >
                 ytm-item-section-renderer:has(ad-slot-renderer)
   - title: "Ozon"
     domains: ["ozon.ru"]
@@ -1142,10 +1148,14 @@ filters:
               Кнопка-всплывашка «Перейти на Plus» (ИЛИ «Бесплатное предложение»
               ИЛИ «Перейти на Go») вверху посередине. Цвет: фиолетовый
             selectors:
+              # Был селектор: `button[type="button"][aria-label][tabindex="0"]`.
+              # Стал: `button[type="button"]`.
+              # Почему поменял: селектор не срабатывал если диалог с ChatGPT
+              # пустой.
               - >-
                 #page-header :has(> button[type="button"] >
-                svg[aria-hidden="true"]):has(> button[type="button"][aria-label][tabindex="0"]
-                > svg[aria-hidden="true"]):not(:has(button[aria-expanded]))
+                svg[aria-hidden="true"]):not(:has(button[aria-expanded])):has(>
+                button[type="button"] > svg[aria-hidden="true"])
           - title: "Всплывашка «Недостаточно места»"
             description: >-
               Всплывашка, появляющаяся над формой ввода текста.

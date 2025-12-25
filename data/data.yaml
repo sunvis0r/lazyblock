@@ -718,6 +718,9 @@ filters:
             selectors: ['> :has(#donateb)']
       VideoPlayer:
         description: 'Видеоплеер'
+        # Видеоплеер располагается на другом домене. В веб-страницу АнимеДжой
+        # встраивается iframe, содержимое которого недоступно uBlock Origin.
+        redefine_domains: ['animejoya.ru']
         super_selector: ['body > #playerjs']
         selectors:
           - title: '«Boosty»'

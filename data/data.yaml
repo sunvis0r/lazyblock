@@ -678,6 +678,53 @@ filters:
             selectors:
               - ".b-animes-menu .spns_special_x300"
               - ".b-animes-menu .spns_special_mini"
+  - title: 'AnimeJoy (АнимеДжой)'
+    domains: ['anime-joy.ru']
+    selector_groups:
+      WebUI:
+        description: 'Веб-интерфейс'
+        selectors:
+          - title: 'Видео-реклама'
+            description: >-
+              Видео-реклама внизу справа. Видео прикреплено к экрану.
+            selectors:
+              - >-
+                body >
+                div:not(.page):not(#close-overlay):not(#side-panel):not(#gotop)[id][style*="width"][style*="height"]
+          - title: 'Подвал'
+            selectors:
+              - 'body > .page footer#footer'
+              # Добавление к подвалу. Содержит надпись «Внимание! Возрастное
+              # ограничение 16+ для всего контента сайта!» и, судя по
+              # `<ul class="counters">`, счётчики.
+              - 'body > .page .body + .foot'
+      RightSidebar:
+        description: 'Сайдбар (панель справа)'
+        super_selector: ['body > .page #mainside #rightside']
+        selectors:
+          - title: 'Видео-реклама'
+            description: >-
+              Реклама в сайдбаре
+            selectors: ['#videorekla']
+          - title: 'Кнопка «Подписаться на онгоинги»'
+            description: >-
+              Фиолетовая кнопка-ссылка с белым текстом «Подписаться на онгоинги»
+              во всю длину сайдбара. Является ссылкой на ВКонтакте.
+            selectors: ['> :has(#vkm)']
+          - title: 'Кнопка «Поддержать сайт»'
+            description: >-
+              Красно-малиновая кнопка-ссылка «Поддержать сайт» во всю длину
+              сайдбара. Является ссылкой на https://boosty.to/animejoy.
+            selectors: ['> :has(#donateb)']
+      VideoPlayer:
+        description: 'Видеоплеер'
+        super_selector: ['body > #playerjs']
+        selectors:
+          - title: '«Boosty»'
+            description: >-
+              Ссылка «Boosty» оранжевого цвета.
+              Ведёт на https://boosty.to/animejoy
+            selectors: ['#oframeplayerjs > :has(#pjs_cast_button_playerjs) + pjsdiv:has(noindex)']
   - title: "Pinterest (пинтерест)"
     domains: ["pinterest.com"]
     selector_groups:
@@ -1611,3 +1658,13 @@ filters:
                 :has(> #CenterPanel) >
                 [class*="top-panel"]:has([data-viewport*="trackableId"]):has([data-testid="x-pda-placements"])
                 ~ :has(~ #CenterPanel)
+  - title: "Читай-город"
+    domains: ['chitai-gorod.ru']
+    selector_groups:
+      WebUI:
+        description: "Веб-интерфейс"
+        selectors:
+          - title: "Подвал"
+            selectors: ['.app-wrapper__content > footer.app-footer']
+          - title: "Куки"
+            selectors: ['.app-wrapper__content > .agreement-notice']

@@ -56,7 +56,7 @@ PUSHD "!CURRENT_DIR!"
             ECHO.>> "!cosmetic_filters_output_path!"
         )
         PUSHD "!SCRIPT_DIR!"
-        jq -r -f generate_cosmetic_filters.jq "!json_fullpath!" >> "!cosmetic_filters_output_path!"
+        jq -r -f "misc\jq\generate_cosmetic_filters.jq" "!json_fullpath!" >> "!cosmetic_filters_output_path!"
         POPD
     )
     :_end_loop

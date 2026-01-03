@@ -36,63 +36,63 @@ SET "HEADER_FILE_PATH=template\cosmetic_filters-header.txt"
 SETLOCAL EnableExtensions EnableDelayedExpansion
 PUSHD "!CURRENT_DIR!"
 :main
-    SET "data_dir=!PROJECT_ROOT!\!DATA_DIR!"
-    SET "output_dir=!PROJECT_ROOT!\!OUTPUT_DIR!"
-    IF NOT EXIST "!output_dir!" (
-        MKDIR "!output_dir!"
-    )
-    SET "output_json_dir=!output_dir!\json"
-    IF NOT EXIST "!output_json_dir!" (
-        MKDIR "!output_json_dir!"
-    )
-    SET "cosmetic_filters_output_path=!OUTPUT_DIR!\!COSMETIC_FILTERS_OUTPUT_FILE_PATH!"
-    IF EXIST "!cosmetic_filters_output_path!" (
-        DEL /Q "!cosmetic_filters_output_path!"
-    )
-    
-    SET "header_file_path=!PROJECT_ROOT!\!HEADER_FILE_PATH!"
-    IF EXIST "!header_file_path!" (
-        TYPE "!header_file_path!" > "!cosmetic_filters_output_path!"
-    )
-    
-    PUSHD "!data_dir!"
-    FOR /F "usebackq delims=" %%i IN (`^"DIR /A:-d /B "!data_dir!"^"`) DO (
-        SET "yaml_fullpath=%%~dpnxi"
-        IF "!yaml_fullpath!" == "" (
-            GOTO _end_loop
-        )
-        SET "yaml_filename_stem=%%~ni"
-        IF "!yaml_filename_stem!" == "" (
-            GOTO _end_loop
-        )
-        
-        SET "json_fullpath=!output_json_dir!\!yaml_filename_stem!.json"
-        
-        yq -o=json "!yaml_fullpath!" > "!json_fullpath!"
-        
-        IF EXIST "!cosmetic_filters_output_path!" (
-            ECHO.>> "!cosmetic_filters_output_path!"
-        )
-        PUSHD "!PROJECT_ROOT!"
-        jq -r -f "misc\jq\generate_cosmetic_filters.jq" "!json_fullpath!" >> "!cosmetic_filters_output_path!"
-        POPD
-    )
-    :_end_loop
-    POPD
-    
-    IF EXIST "!cosmetic_filters_output_path!" (
-        FC "!cosmetic_filters_output_path!" "!header_file_path!" > NUL
-        SET "exitcode=!ERRORLEVEL!"
-        IF "!exitcode!" == "0" (
-            ECHO Не удалось сгенерировать файл «!cosmetic_filters_output_path!».
-            EXIT /B 1
-        ) ELSE (
-            ECHO Сгенерированный файл: «!cosmetic_filters_output_path!».
-        )
-    ) ELSE (
-        ECHO Не удалось сгенерировать файл «!cosmetic_filters_output_path!».
-        EXIT /B 1
-    )
+	SET "data_dir=!PROJECT_ROOT!\!DATA_DIR!"
+	SET "output_dir=!PROJECT_ROOT!\!OUTPUT_DIR!"
+	IF NOT EXIST "!output_dir!" (
+		MKDIR "!output_dir!"
+	)
+	SET "output_json_dir=!output_dir!\json"
+	IF NOT EXIST "!output_json_dir!" (
+		MKDIR "!output_json_dir!"
+	)
+	SET "cosmetic_filters_output_path=!OUTPUT_DIR!\!COSMETIC_FILTERS_OUTPUT_FILE_PATH!"
+	IF EXIST "!cosmetic_filters_output_path!" (
+		DEL /Q "!cosmetic_filters_output_path!"
+	)
+	
+	SET "header_file_path=!PROJECT_ROOT!\!HEADER_FILE_PATH!"
+	IF EXIST "!header_file_path!" (
+		TYPE "!header_file_path!" > "!cosmetic_filters_output_path!"
+	)
+	
+	PUSHD "!data_dir!"
+	FOR /F "usebackq delims=" %%i IN (`^"DIR /A:-d /B "!data_dir!"^"`) DO (
+		SET "yaml_fullpath=%%~dpnxi"
+		IF "!yaml_fullpath!" == "" (
+			GOTO _end_loop
+		)
+		SET "yaml_filename_stem=%%~ni"
+		IF "!yaml_filename_stem!" == "" (
+			GOTO _end_loop
+		)
+		
+		SET "json_fullpath=!output_json_dir!\!yaml_filename_stem!.json"
+		
+		yq -o=json "!yaml_fullpath!" > "!json_fullpath!"
+		
+		IF EXIST "!cosmetic_filters_output_path!" (
+			ECHO.>> "!cosmetic_filters_output_path!"
+		)
+		PUSHD "!PROJECT_ROOT!"
+		jq -r -f "misc\jq\generate_cosmetic_filters.jq" "!json_fullpath!" >> "!cosmetic_filters_output_path!"
+		POPD
+	)
+	:_end_loop
+	POPD
+	
+	IF EXIST "!cosmetic_filters_output_path!" (
+		FC "!cosmetic_filters_output_path!" "!header_file_path!" > NUL
+		SET "exitcode=!ERRORLEVEL!"
+		IF "!exitcode!" == "0" (
+			ECHO Не удалось сгенерировать файл «!cosmetic_filters_output_path!».
+			EXIT /B 1
+		) ELSE (
+			ECHO Сгенерированный файл: «!cosmetic_filters_output_path!».
+		)
+	) ELSE (
+		ECHO Не удалось сгенерировать файл «!cosmetic_filters_output_path!».
+		EXIT /B 1
+	)
 :exit
 POPD
 ENDLOCAL

@@ -26,7 +26,7 @@ IF "%SCRIPT_DIR:~-1%" == "\" (
     SET "SCRIPT_DIR=%SCRIPT_DIR:~0,-1%"
 )
 SET "SCRIPT_CFG=%SCRIPT_DIR%\%~n0.cfg"
-SET "SCRIPT_VERSION=0.2.0"
+SET "SCRIPT_VERSION=0.3.0"
 
 SET "DATA_DIR=data"
 SET "OUTPUT_DIR=build"
@@ -50,11 +50,6 @@ PUSHD "!CURRENT_DIR!"
 		DEL /Q "!cosmetic_filters_output_path!"
 	)
 	
-	SET "header_file_path=!PROJECT_ROOT!\!HEADER_FILE_PATH!"
-	IF EXIST "!header_file_path!" (
-		TYPE "!header_file_path!" > "!cosmetic_filters_output_path!"
-	)
-	
 	PUSHD "!data_dir!"
 	FOR /F "usebackq delims=" %%i IN (`^"DIR /A:-d /B "!data_dir!"^"`) DO (
 		SET "yaml_fullpath=%%~dpnxi"
@@ -69,17 +64,34 @@ PUSHD "!CURRENT_DIR!"
 		SET "json_fullpath=!output_json_dir!\!yaml_filename_stem!.json"
 		
 		yq -o=json "!yaml_fullpath!" > "!json_fullpath!"
-		
-		IF EXIST "!cosmetic_filters_output_path!" (
-			ECHO.>> "!cosmetic_filters_output_path!"
-		)
-		PUSHD "!PROJECT_ROOT!"
-		jq -r -f "misc\jq\generate_cosmetic_filters.jq" "!json_fullpath!" >> "!cosmetic_filters_output_path!"
-		POPD
 	)
 	:_end_loop
 	POPD
 	
+	REM Создание файла «dataset.json».
+	SET "merged_json=!output_dir!\dataset.json"
+	SET "json_fullpaths_args_list="
+	FOR /F "usebackq delims=" %%i IN (`^"DIR /A:-d /B "!output_json_dir!"^"`) DO (
+		SET "json_file=!output_json_dir!\%%~i"
+		IF "!json_fullpaths_args_list!" == "" (
+			SET "json_fullpaths_args_list="!json_file!""
+		) ELSE (
+			SET "json_fullpaths_args_list=!json_fullpaths_args_list! "!json_file!""
+		)
+	)
+	jq --slurp "." !json_fullpaths_args_list! > "!merged_json!"
+	
+	REM Создание файла «cosmetic_filters.txt».
+	SET "header_file_path=!PROJECT_ROOT!\!HEADER_FILE_PATH!"
+	IF EXIST "!header_file_path!" (
+		TYPE "!header_file_path!" > "!cosmetic_filters_output_path!"
+		ECHO.>> "!cosmetic_filters_output_path!"
+	)
+	PUSHD "!PROJECT_ROOT!"
+	jq -r -f "misc\jq\generate_cosmetic_filters.jq" "!merged_json!" >> "!cosmetic_filters_output_path!"
+	POPD
+	
+	REM Проверки.
 	IF EXIST "!cosmetic_filters_output_path!" (
 		FC "!cosmetic_filters_output_path!" "!header_file_path!" > NUL
 		SET "exitcode=!ERRORLEVEL!"

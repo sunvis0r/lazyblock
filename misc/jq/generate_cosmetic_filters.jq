@@ -1,4 +1,4 @@
-.filters
+.[].filters
 | to_entries[] | .key as $index | .value  # Способ получения нумерации
 
 # Итерируемся по каждому сайту.

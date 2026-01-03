@@ -33,9 +33,10 @@ https://github.com/sunvis0r/lazyblock/releases/latest/download/cosmetic_filters.
 
 Для использования генератора фильтров требуются следующие предустановленные
 программы:
-* [yq](https://github.com/mikefarah/yq) — парсер и процессор YAML
-* [jq](https://github.com/jqlang/jq) — парсер и процессор JSON
-Обе эти программы должны быть доступны в окружении (т.е. в переменной `PATH`).
+* GNU Make (`choco install make` для Windows или `apt-get install make` на Linux);
+* [yq](https://github.com/mikefarah/yq) — парсер и процессор YAML;
+* [jq](https://github.com/jqlang/jq) — парсер и процессор JSON.
+Все указанные программы должны быть доступны в окружении (т.е. в переменной `PATH`).
 
 ### Добавление фильтров
 
@@ -44,7 +45,15 @@ https://github.com/sunvis0r/lazyblock/releases/latest/download/cosmetic_filters.
 
 ### Запуск
 
-Запустить генератор: [generate.cmd](./generate.cmd)
+Запустить генератор:
+```
+make
+```
+
+Справку по `make`-таргетам см. здесь:
+```
+make help
+```
 
 ## Contributing
 

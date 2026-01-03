@@ -2,6 +2,23 @@
 CHCP 65001 > NUL
 SET "exitcode=255"
 
+IF NOT "%IS_DIRECT_RUN%" == "false" (
+	ECHO Данный скрипт запрещено вызывать вручную. Используй `make` в директории с файлом Makefile.>&2
+	EXIT /B 1
+)
+IF "%PROJECT_ROOT%" == "" (
+	ECHO Не указана обязательная переменная окружения «PROJECT_ROOT». Используй `make` в директории с файлом Makefile.>&2
+	EXIT /B 1
+)
+IF /I NOT EXIST "%PROJECT_ROOT%" (
+	ECHO Директория «%PROJECT_ROOT%» не найдена.>&2
+	EXIT /B 1
+)
+IF /I NOT EXIST "%PROJECT_ROOT%\" (
+	ECHO «%PROJECT_ROOT%» не является директорией.>&2
+	EXIT /B 1
+)
+
 SET "CURRENT_DIR=%CD%"
 SET "SCRIPT_NAME=%~nx0"
 SET "SCRIPT_DIR=%~dp0"
@@ -10,16 +27,17 @@ IF "%SCRIPT_DIR:~-1%" == "\" (
 )
 SET "SCRIPT_CFG=%SCRIPT_DIR%\%~n0.cfg"
 SET "SCRIPT_VERSION=0.2.0"
+
+SET "DATA_DIR=data"
+SET "OUTPUT_DIR=build"
+SET "COSMETIC_FILTERS_OUTPUT_FILE_PATH=cosmetic_filters.txt"
+SET "HEADER_FILE_PATH=template\cosmetic_filters-header.txt"
+
 SETLOCAL EnableExtensions EnableDelayedExpansion
 PUSHD "!CURRENT_DIR!"
 :main
-    SET "DATA_DIR=data"
-    SET "OUTPUT_DIR=build"
-    SET "COSMETIC_FILTERS_OUTPUT_FILE_PATH=cosmetic_filters.txt"
-    SET "HEADER_FILE_PATH=template\cosmetic_filters-header.txt"
-    
-    SET "data_dir=!SCRIPT_DIR!\!DATA_DIR!"
-    SET "output_dir=!SCRIPT_DIR!\!OUTPUT_DIR!"
+    SET "data_dir=!PROJECT_ROOT!\!DATA_DIR!"
+    SET "output_dir=!PROJECT_ROOT!\!OUTPUT_DIR!"
     IF NOT EXIST "!output_dir!" (
         MKDIR "!output_dir!"
     )
@@ -32,7 +50,7 @@ PUSHD "!CURRENT_DIR!"
         DEL /Q "!cosmetic_filters_output_path!"
     )
     
-    SET "header_file_path=!SCRIPT_DIR!\!HEADER_FILE_PATH!"
+    SET "header_file_path=!PROJECT_ROOT!\!HEADER_FILE_PATH!"
     IF EXIST "!header_file_path!" (
         TYPE "!header_file_path!" > "!cosmetic_filters_output_path!"
     )
@@ -55,7 +73,7 @@ PUSHD "!CURRENT_DIR!"
         IF EXIST "!cosmetic_filters_output_path!" (
             ECHO.>> "!cosmetic_filters_output_path!"
         )
-        PUSHD "!SCRIPT_DIR!"
+        PUSHD "!PROJECT_ROOT!"
         jq -r -f "misc\jq\generate_cosmetic_filters.jq" "!json_fullpath!" >> "!cosmetic_filters_output_path!"
         POPD
     )
